@@ -1,4 +1,4 @@
-import { AppLoading } from 'expo';
+import { AppLoading, Notifications} from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import React, { useState } from 'react';
@@ -6,9 +6,15 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import AppNavigator from './navigation/AppNavigator';
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from "expo-task-manager";
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
+
+  TaskManager.isTaskRegisteredAsync("MYTASK").then(() => {
+    console.log("MYTASK task is REGISTERED");
+  })
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -26,7 +32,37 @@ export default function App(props) {
       </View>
     );
   }
+  
 }
+
+const localnotification = {
+  title: 'Example Title!',
+  body: 'This is the body text of the local notification',
+  android: {
+    sound: true,
+  },
+  ios: {
+    sound: true,
+  },
+};
+
+TaskManager.defineTask("MYTASK", ({data, error}) => {
+  console.log('Executing MYTASK');
+  let sendAfterFiveSeconds = Date.now();
+  sendAfterFiveSeconds += 5000;
+
+  const schedulingOptions = { time: sendAfterFiveSeconds };
+  Notifications.presentLocalNotificationAsync(
+    localnotification
+  );
+});
+BackgroundFetch.setMinimumIntervalAsync(1);
+BackgroundFetch.registerTaskAsync("MYTASK", {
+  minimumInterval: 5,
+  stopOnTerminate: false,
+  startOnBoot: true
+});
+
 
 async function loadResourcesAsync() {
   await Promise.all([
