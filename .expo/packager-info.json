@@ -3,8 +3,8 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://q6-kms.anonymous.gavel-app.exp.direct",
+  "packagerNgrokUrl": "https://packager.q6-kms.anonymous.gavel-app.exp.direct",
+  "ngrokPid": 7756,
   "webpackServerPort": null
 }
