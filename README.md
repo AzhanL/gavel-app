@@ -13,7 +13,9 @@
 # Install dependencies
 ```
 npm install -g expo-cli
+npm upgrade react-native (In case if expo start command gives an error)
 npm install
+
 ```
 or
 ```
@@ -23,7 +25,7 @@ yarn install
 
 
 # Run 
-1. Run `expo start`
+1. Run `expo start` (If you receive an error, try npm upgrade react-native and npm install) 
 2. Open the URL provided
 3. Set connection mode to `tunnel` (this mode will require internet)
 4. Scan QR Code with expo app on Android or iOS
