@@ -1,98 +1,89 @@
-import { AppLoading, Notifications} from 'expo';
-import { Asset } from 'expo-asset';
-import * as Font from 'expo-font';
-import React, { useState } from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
-import AppNavigator from './navigation/AppNavigator';
-import * as BackgroundFetch from 'expo-background-fetch';
-import * as TaskManager from "expo-task-manager";
+import React, { Component } from 'react';
 
-export default function App(props) {
-  const [isLoadingComplete, setLoadingComplete] = useState(false);
+import { View, Image, TouchableOpacity } from 'react-native';
 
-  TaskManager.isTaskRegisteredAsync("MYTASK").then(() => {
-    console.log("MYTASK task is REGISTERED");
-  })
+import {createAppContainer} from 'react-navigation';
+import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createStackNavigator} from 'react-navigation-stack';
+import Screen1 from './pages/home';
+import Screen2 from './pages/cases2';
 
-  if (!isLoadingComplete && !props.skipLoadingScreen) {
+ 
+class NavigationDrawerStructure extends Component {
+  //Structure for the navigatin Drawer
+  toggleDrawer = () => {
+    //Props to open/close the drawer
+    this.props.navigationProps.toggleDrawer();
+  };
+  render() {
     return (
-      <AppLoading
-        startAsync={loadResourcesAsync}
-        onError={handleLoadingError}
-        onFinish={() => handleFinishLoading(setLoadingComplete)}
-      />
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        <AppNavigator />
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
+          
+          <Image
+            source={require('./image/drawer.png')}
+            style={{ width: 25, height: 25, marginLeft: 5 }}
+          />
+          <Icon
+            name='menu'
+            color='white' 
+          />
+        </TouchableOpacity>
       </View>
     );
   }
-  
 }
-
-const localnotification = {
-  title: 'Example Title!',
-  body: 'This is the body text of the local notification',
-  android: {
-    sound: true,
-  },
-  ios: {
-    sound: true,
-  },
-};
-
-TaskManager.defineTask("MYTASK", ({data, error}) => {
-  console.log('Executing MYTASK');
-  let sendAfterFiveSeconds = Date.now();
-  sendAfterFiveSeconds += 5000;
-
-  const schedulingOptions = { time: sendAfterFiveSeconds };
-  Notifications.presentLocalNotificationAsync(
-    localnotification
-  );
-});
-BackgroundFetch.setMinimumIntervalAsync(1);
-BackgroundFetch.registerTaskAsync("MYTASK", {
-  minimumInterval: 5,
-  stopOnTerminate: false,
-  startOnBoot: true
-});
-
-
-async function loadResourcesAsync() {
-  await Promise.all([
-    Asset.loadAsync([
-      require('./assets/images/robot-dev.png'),
-      require('./assets/images/robot-prod.png'),
-    ]),
-    Font.loadAsync({
-      // This is the font that we are using for our tab bar
-      ...Ionicons.font,
-      // We include SpaceMono because we use it in HomeScreen.js. Feel free to
-      // remove this if you are not using it in your app
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+ 
+const FirstActivity_StackNavigator = createStackNavigator({
+  //All the screen from the Screen1 will be indexed here
+  First: {
+    screen: Screen1,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Home',
+      headerLeft: <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: 'black',
+      },
+      headerTintColor: 'white',
     }),
-  ]);
-}
-
-function handleLoadingError(error) {
-  // In this case, you might want to report the error to your error reporting
-  // service, for example Sentry
-  console.warn(error);
-}
-
-function handleFinishLoading(setLoadingComplete) {
-  setLoadingComplete(true);
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
   },
 });
+ 
+const Screen2_StackNavigator = createStackNavigator({
+  //All the screen from the Screen2 will be indexed here
+  Second: {
+    screen: Screen2,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Cases',
+      headerLeft: <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: 'black',
+      },
+      headerTintColor: 'white',
+    }),
+  },
+});
+ 
+
+ 
+const DrawerNavigatorExample = createDrawerNavigator({
+  //Drawer Optons and indexing
+  Screen1: {
+    //Title
+    screen: FirstActivity_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Home',
+    },
+  },
+  Screen2: {
+    //Title
+    screen: Screen2_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Cases',
+    },
+  },
+
+});
+ 
+export default createAppContainer(DrawerNavigatorExample);

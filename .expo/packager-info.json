@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
+  "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 8104,
-  "expoServerNgrokUrl": "https://xv-v7c.anonymous.gavel-app.exp.direct",
-  "packagerNgrokUrl": "https://packager.xv-v7c.anonymous.gavel-app.exp.direct",
-  "ngrokPid": 12212,
-  "webpackServerPort": null
+  "packagerPid": 13100,
+  "expoServerNgrokUrl": "https://uz-pfa.anonymous.app.exp.direct",
+  "packagerNgrokUrl": "https://packager.uz-pfa.anonymous.app.exp.direct",
+  "ngrokPid": 14580,
+  "webpackServerPort": 19006
 }
