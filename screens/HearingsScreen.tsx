@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
 import {
   Appbar,
   Searchbar,
@@ -9,15 +8,15 @@ import {
   Menu,
   Portal,
   Dialog,
-  Paragraph,
   Button,
-  RadioButton
+  RadioButton,
+  Text
 } from "react-native-paper";
 import { Content } from "native-base";
-import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_HEARINGS_BY_PARTYNAME } from "../constants/graphql";
 
-export default function HearingsScreen({ props, navigation, route }) {
+export default function HearingsScreen({ navigation }) {
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
   // Search Setting Dialog for 3 dot menu item
@@ -38,7 +37,7 @@ export default function HearingsScreen({ props, navigation, route }) {
   const [searching, setSearchingToggle] = useState(false);
 
   // Retreived Data
-  const [retreivedData, setRetreivedData] = useState(false);
+  const [, setRetreivedData] = useState(false);
 
   // Sorted by Category
   const [sortedDataByCategory, setSortedDataByCategory] = useState(null);
@@ -61,7 +60,7 @@ export default function HearingsScreen({ props, navigation, route }) {
   };
 
   // GQL data,loading, and error state variables extracted from query
-  const [searchByName, { data, loading, error, refetch }] = useLazyQuery(
+  const [searchByName, { data, loading }] = useLazyQuery(
     SEARCH_HEARINGS_BY_PARTYNAME,
     {
       onCompleted: query_result => {
@@ -118,12 +117,12 @@ export default function HearingsScreen({ props, navigation, route }) {
               setSearchBarValue(value);
             }}
             value={searchBarValue}
-            onFocus={event => {}}
+            onFocus={() => {}}
             onEndEditing={() => {
               setSearchingToggle(false);
               setDataReady(false);
             }}
-            onSubmitEditing={event => {
+            onSubmitEditing={() => {
               setRetreivedData(false);
               setDataReady(false);
               if (searchSettingValue === "courtFileNumber") {

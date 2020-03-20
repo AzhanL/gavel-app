@@ -33,6 +33,11 @@ export default function ModalNavigator({ navigation, route }) {
         component={CourtDetailScreen}
         options={{ title: route.params.name }}
       />
+      <ModalStack.Screen
+        name="Hearing Detail"
+        component={CourtDetailScreen}
+        options={{ title: route.params.name }}
+      />
     </ModalStack.Navigator>
   );
 }
