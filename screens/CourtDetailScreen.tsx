@@ -69,8 +69,6 @@ export default function CourtDetailScreen({ route, navigation }) {
       <Appbar.Header style={{ height: 70 }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title={courtInfo["name"]} subtitle={court_category} />
-        <Appbar.Action icon="magnify" />
-        <Appbar.Action icon="dots-vertical" />
       </Appbar.Header>
       <Content padder>
         {locations.map((court_location, i) => (
