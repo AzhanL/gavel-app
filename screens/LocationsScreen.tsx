@@ -19,12 +19,13 @@ import {
   CardItem,
   Card
 } from "native-base";
-import { List as PaperList, Checkbox } from "react-native-paper";
+import { List as PaperList, Checkbox, Menu } from "react-native-paper";
 
 export default function LocationScreen({ props, navigation, route }) {
   const { loading, error, data, refetch } = useQuery(GET_COURTS);
   const [courtInfo, setCourtInfo] = useState(null);
-
+  // 3 Dot menu - top right
+  const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
   // Storage for various court types
   const [provincialCourts, setProvincialCourts] = useState(null);
   const [provincialSuperiorCourts, setProvincialSuperiorCourts] = useState(
@@ -82,7 +83,7 @@ export default function LocationScreen({ props, navigation, route }) {
           <Button transparent>
             <MaterialCommunityIcons
               name="arrow-left"
-              size={32}
+              size={24}
               color="white"
               onPress={() => navigation.goBack()}
             />
@@ -96,10 +97,15 @@ export default function LocationScreen({ props, navigation, route }) {
             <Icon name="search" />
           </Button>
           <Button transparent>
-            <Icon name="heart" />
-          </Button>
-          <Button transparent>
-            <Icon name="more" />
+            <Menu
+              visible={moreMenuVisible}
+              onDismiss={() => setMoreMenuVisiblity(false)}
+              anchor={
+                <Icon name="more" onPress={() => setMoreMenuVisiblity(true)} />
+              }
+            >
+              <Menu.Item title="Refresh Locations" onPress={() => refetch()} />
+            </Menu>
           </Button>
         </Right>
       </Header>
@@ -114,7 +120,7 @@ export default function LocationScreen({ props, navigation, route }) {
         {courtInfo ? (
           <>
             {/* Provincial General Courts */}
-            <PaperList.Accordion title="Provincial Courts">
+            <PaperList.Accordion title={`Provincial Courts (${provincialCourts.length})`}>
               {provincialCourts.map(({ name }, i) => (
                 <PaperList.Item
                   title={name}
@@ -125,7 +131,7 @@ export default function LocationScreen({ props, navigation, route }) {
             </PaperList.Accordion>
 
             {/* Provincial Superior Courts */}
-            <PaperList.Accordion title="Superior Courts">
+            <PaperList.Accordion title={`Superior Courts (${provincialSuperiorCourts.length})`}>
               {provincialSuperiorCourts.map((courtInfo, i) => (
                 <PaperList.Item
                   title={courtInfo["name"]}
@@ -145,12 +151,21 @@ export default function LocationScreen({ props, navigation, route }) {
             </PaperList.Accordion>
 
             {/* Provincial Appeal Courts */}
-            <PaperList.Accordion title="Appeal Courts">
-              {provincialAppealCourts.map(({ name }, i) => (
+            <PaperList.Accordion title={`Superior Courts (${provincialAppealCourts.length})`}>
+              {provincialAppealCourts.map((courtInfo, i) => (
                 <PaperList.Item
-                  title={name}
+                  title={courtInfo["name"]}
                   key={i}
                   left={props => <PaperList.Icon {...props} icon="bank" />}
+                  right={props => (
+                    <PaperList.Icon {...props} icon="arrow-right" />
+                  )}
+                  onPress={() =>
+                    navigation.navigate("Modals", {
+                      screen: "CourtDetail",
+                      params: { courtInfo: courtInfo, name: courtInfo["name"] }
+                    })
+                  }
                 />
               ))}
             </PaperList.Accordion>
