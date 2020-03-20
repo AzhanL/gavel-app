@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": "https://px-48y.anonymous.gavel-app.exp.direct",
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 2697,
+  "expoServerNgrokUrl": "https://xv-v7c.anonymous.gavel-app.exp.direct",
   "packagerNgrokUrl": "https://packager.xv-v7c.anonymous.gavel-app.exp.direct",
-  "ngrokPid": 14098,
+  "ngrokPid": 2773,
   "webpackServerPort": null
 }
