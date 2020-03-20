@@ -11,6 +11,7 @@ import {
   Paragraph,
   Divider
 } from "react-native-paper";
+import { Linking } from "expo";
 
 export default function CourtDetailScreen({ route, navigation }) {
   // Extract court info from params
@@ -63,7 +64,6 @@ export default function CourtDetailScreen({ route, navigation }) {
     }
   }
 
-  console.log(locations);
   return (
     <Container>
       <Appbar.Header style={{ height: 70 }}>
@@ -139,8 +139,8 @@ export default function CourtDetailScreen({ route, navigation }) {
                   </DataTable.Header>
 
                   {court_location["operationalDays"] ? (
-                    court_location["operationalDays"].map(data => (
-                      <DataTable.Row>
+                    court_location["operationalDays"].map((data, i) => (
+                      <DataTable.Row key={i}>
                         <DataTable.Cell>
                           {dayShortToLong(data["weekDay"])}
                         </DataTable.Cell>
@@ -171,7 +171,22 @@ export default function CourtDetailScreen({ route, navigation }) {
               </Card.Content>
               {/* <Card.Cover source={{ uri: "https://picsum.photos/700" }} /> */}
               <Card.Actions>
-                <Button>Open in Google Maps</Button>
+                {/* Formulate the url and open it */}
+                <Button
+                  onPress={() => {
+                    Linking.openURL(
+                      "https://www.google.com/maps/place/" +
+                        [
+                          court_location["addressLine1"],
+                          court_location["postalCode"],
+                          court_location["city"],
+                          province
+                        ].join(",")
+                    );
+                  }}
+                >
+                  Open in Google Maps
+                </Button>
               </Card.Actions>
             </Card>
 

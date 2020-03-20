@@ -98,12 +98,14 @@ export default function HearingsScreen({ props, navigation, route }) {
               onPress={() => {
                 setSearchSettingDialog(true);
               }}
+              key={1}
             />
             <Menu.Item
               title="Output Setting"
               onPress={() => {
                 setOutputSettingDialog(true);
               }}
+              key={2}
             />
           </Menu>
         </Appbar.Header>
@@ -138,11 +140,14 @@ export default function HearingsScreen({ props, navigation, route }) {
       <Content padder>
         <>
           {data && dataReady && sortedDataByCategory ? (
-            Object.keys(sortedDataByCategory).map(category => (
-              <List.Accordion title={category}>
-                {sortedDataByCategory[category].map(hearing_details => (
+            Object.keys(sortedDataByCategory).map((category, i) => (
+              <List.Accordion title={category} key={i}>
+                {sortedDataByCategory[category].map((hearing_details, j) => (
                   // Output title
-                  <List.Item title={hearing_details[outputSettingValue]} />
+                  <List.Item
+                    title={hearing_details[outputSettingValue]}
+                    key={j + 10000}
+                  />
                 ))}
               </List.Accordion>
             ))
