@@ -10,7 +10,7 @@ const BottomTab = createBottomTabNavigator();
 export default function MainMenuNavigator({ navigation, route }) {
   return (
     <BottomTab.Navigator
-      initialRouteName="Locations"
+      initialRouteName="Hearings"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           if (route.name === "Home") {
