@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_COURTS } from "../constants/graphql";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   Container,
   Header,
@@ -13,15 +12,11 @@ import {
   Title,
   Icon,
   Content,
-  List,
-  ListItem,
-  Spinner,
-  CardItem,
-  Card
+  Spinner
 } from "native-base";
-import { List as PaperList, Checkbox, Menu } from "react-native-paper";
+import { List, Menu } from "react-native-paper";
 
-export default function LocationScreen({ props, navigation, route }) {
+export default function LocationScreen({ navigation }) {
   const { loading, error, data, refetch } = useQuery(GET_COURTS);
   const [courtInfo, setCourtInfo] = useState(null);
   // 3 Dot menu - top right
@@ -120,26 +115,28 @@ export default function LocationScreen({ props, navigation, route }) {
         {courtInfo ? (
           <>
             {/* Provincial General Courts */}
-            <PaperList.Accordion title={`Provincial Courts (${provincialCourts.length})`}>
+            <List.Accordion
+              title={`Provincial Courts (${provincialCourts.length})`}
+            >
               {provincialCourts.map(({ name }, i) => (
-                <PaperList.Item
+                <List.Item
                   title={name}
                   key={i}
-                  left={props => <PaperList.Icon {...props} icon="bank" />}
+                  left={props => <List.Icon {...props} icon="bank" />}
                 />
               ))}
-            </PaperList.Accordion>
+            </List.Accordion>
 
             {/* Provincial Superior Courts */}
-            <PaperList.Accordion title={`Superior Courts (${provincialSuperiorCourts.length})`}>
+            <List.Accordion
+              title={`Superior Courts (${provincialSuperiorCourts.length})`}
+            >
               {provincialSuperiorCourts.map((courtInfo, i) => (
-                <PaperList.Item
+                <List.Item
                   title={courtInfo["name"]}
                   key={i}
-                  left={props => <PaperList.Icon {...props} icon="bank" />}
-                  right={props => (
-                    <PaperList.Icon {...props} icon="arrow-right" />
-                  )}
+                  left={props => <List.Icon {...props} icon="bank" />}
+                  right={props => <List.Icon {...props} icon="arrow-right" />}
                   onPress={() =>
                     navigation.navigate("Modals", {
                       screen: "CourtDetail",
@@ -148,18 +145,18 @@ export default function LocationScreen({ props, navigation, route }) {
                   }
                 />
               ))}
-            </PaperList.Accordion>
+            </List.Accordion>
 
             {/* Provincial Appeal Courts */}
-            <PaperList.Accordion title={`Superior Courts (${provincialAppealCourts.length})`}>
+            <List.Accordion
+              title={`Superior Courts (${provincialAppealCourts.length})`}
+            >
               {provincialAppealCourts.map((courtInfo, i) => (
-                <PaperList.Item
+                <List.Item
                   title={courtInfo["name"]}
                   key={i}
-                  left={props => <PaperList.Icon {...props} icon="bank" />}
-                  right={props => (
-                    <PaperList.Icon {...props} icon="arrow-right" />
-                  )}
+                  left={props => <List.Icon {...props} icon="bank" />}
+                  right={props => <List.Icon {...props} icon="arrow-right" />}
                   onPress={() =>
                     navigation.navigate("Modals", {
                       screen: "CourtDetail",
@@ -168,7 +165,7 @@ export default function LocationScreen({ props, navigation, route }) {
                   }
                 />
               ))}
-            </PaperList.Accordion>
+            </List.Accordion>
           </>
         ) : (
           <Spinner color="#20272F" />
@@ -177,15 +174,3 @@ export default function LocationScreen({ props, navigation, route }) {
     </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  mb: {
-    marginBottom: 15
-  }
-});
