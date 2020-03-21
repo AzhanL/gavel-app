@@ -68,12 +68,7 @@ export default function LocationScreen({ navigation }) {
   }
   return (
     <Container>
-      {/* <View
-        style={{
-          ...CustomStatusBarStyles.statusBarPadding,
-          backgroundColor: "black"
-        }}
-      /> */}
+      {/* TODO: Change header from native-base to appbar from papertheme */}
       <Header>
         <Left>
           <Button transparent>
