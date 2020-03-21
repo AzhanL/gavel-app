@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_COURTS = gql`
-  query {
+  query GetCourts{
     courts {
       name
       courtBranch
