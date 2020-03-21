@@ -15,9 +15,10 @@ import {
   Spinner
 } from "native-base";
 import { List, Menu } from "react-native-paper";
+import { GetCourts, GetCourts_courts } from "../constants/generated/GetCourts";
 
 export default function LocationScreen({ navigation }) {
-  const { loading, error, data, refetch } = useQuery(GET_COURTS);
+  const { loading, error, data, refetch } = useQuery<GetCourts>(GET_COURTS);
   const [courtInfo, setCourtInfo] = useState(null);
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
@@ -41,19 +42,19 @@ export default function LocationScreen({ navigation }) {
     provincial_appeal_courts.pop();
 
     // Loop through every court in the province
-    data.courts.forEach(court => {
+    data.courts?.forEach(court => {
       // Provincial courts
-      if (court["courtBranch"] === "P") {
+      if (court.courtBranch === "P") {
         // General
-        if (court["courtType"] == "G") {
+        if (court.courtType == "G") {
           provincial_courts.push(court);
         }
         // Superior
-        else if (court["courtType"] == "S") {
+        else if (court.courtType == "S") {
           provincial_superior_courts.push(court);
         }
         // Appeal
-        else if (court["courtType"] == "A") {
+        else if (court.courtType == "A") {
           provincial_appeal_courts.push(court);
         }
       }
@@ -99,7 +100,13 @@ export default function LocationScreen({ navigation }) {
                 <Icon name="more" onPress={() => setMoreMenuVisiblity(true)} />
               }
             >
-              <Menu.Item title="Refresh Locations" onPress={() => refetch()} />
+              <Menu.Item
+                title="Refresh Locations"
+                onPress={() => {
+                  refetch();
+                }}
+                key={1}
+              />
             </Menu>
           </Button>
         </Right>
