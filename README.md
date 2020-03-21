@@ -31,5 +31,6 @@ apollo client:codegen \
   --endpoint http://gavelapi.ontariotechu.xyz:8000/graphql/ \
   --target typescript \
   --tagName=gql \
-  --outputFlat constants/generated
+  --outputFlat constants/generated \
+  --tsFileExtension=tsx
 ```
