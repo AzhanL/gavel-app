@@ -32,6 +32,7 @@ export const GET_COURTS = gql`
 export const SEARCH_HEARINGS_BY_PARTYNAME = gql`
   query searchHearingsByPartyName($partyName: String) {
     hearings(partyName: $partyName) {
+      id
       courtFileNumber
       title
       partyName
