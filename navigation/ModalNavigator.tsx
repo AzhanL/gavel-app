@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import CourtDetailScreen from "../screens/CourtDetailScreen";
+import HearingDetailScreen from "../screens/HearingDetailScreen";
 import { TransitionSpec } from "@react-navigation/stack/lib/typescript/src/types";
 
 const ModalStack = createStackNavigator();
@@ -34,8 +35,8 @@ export default function ModalNavigator({ navigation, route }) {
         options={{ title: route.params.name }}
       />
       <ModalStack.Screen
-        name="Hearing Detail"
-        component={CourtDetailScreen}
+        name="HearingDetail"
+        component={HearingDetailScreen}
         options={{ title: route.params.name }}
       />
     </ModalStack.Navigator>
