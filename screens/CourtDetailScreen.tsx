@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Content } from "native-base";
+import { Container, Content, View } from "native-base";
 import { Appbar, DataTable } from "react-native-paper";
 import {
   Avatar,
@@ -70,7 +70,7 @@ export default function CourtDetailScreen({ route, navigation }) {
       </Appbar.Header>
       <Content padder>
         {locations.map((court_location, i) => (
-          <>
+          <View key={i}>
             <Card>
               <Card.Title
                 title={"Location " + (i + 1)}
@@ -137,8 +137,8 @@ export default function CourtDetailScreen({ route, navigation }) {
                   </DataTable.Header>
 
                   {court_location["operationalDays"] ? (
-                    court_location["operationalDays"].map((data, i) => (
-                      <DataTable.Row key={i}>
+                    court_location["operationalDays"].map((data, j) => (
+                      <DataTable.Row key={j+1000}>
                         <DataTable.Cell>
                           {dayShortToLong(data["weekDay"])}
                         </DataTable.Cell>
@@ -194,7 +194,7 @@ export default function CourtDetailScreen({ route, navigation }) {
             ) : (
               <></>
             )}
-          </>
+          </View>
         ))}
       </Content>
     </Container>
