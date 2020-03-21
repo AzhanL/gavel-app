@@ -22,3 +22,14 @@ yarn install
 2. Open the URL provided
 3. Set connection mode to `tunnel` (this mode will require internet)
 4. Scan QR Code with expo app on Android or iOS
+
+# To Generate Types
+```bash 
+apollo client:codegen \
+  --excludes=node_modules/* \
+  --includes=**/*.tsx \
+  --endpoint http://gavelapi.ontariotechu.xyz:8000/graphql/ \
+  --target typescript \
+  --tagName=gql \
+  --outputFlat constants/generated
+```
