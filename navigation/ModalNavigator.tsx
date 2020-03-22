@@ -1,7 +1,7 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
 import CourtDetailScreen from "../screens/CourtDetailScreen";
 import HearingDetailScreen from "../screens/HearingDetailScreen";
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 import { TransitionSpec } from "@react-navigation/stack/lib/typescript/src/types";
 
 const ModalStack = createStackNavigator();
