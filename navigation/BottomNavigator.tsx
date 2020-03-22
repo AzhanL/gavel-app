@@ -1,9 +1,9 @@
-import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import HearingsScreen from "../screens/HearingsScreen";
-import LocationsScreen from "../screens/LocationsScreen";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import HearingsScreen from '../screens/HearingsScreen';
+import HomeScreen from '../screens/HomeScreen';
+import LocationsScreen from '../screens/LocationsScreen';
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const BottomTab = createBottomTabNavigator();
 

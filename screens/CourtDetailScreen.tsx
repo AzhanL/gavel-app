@@ -1,15 +1,15 @@
-import React from "react";
-import { Container, Content, View } from "native-base";
-import { Appbar, DataTable } from "react-native-paper";
+import React from 'react';
+import { Appbar, DataTable } from 'react-native-paper';
 import {
   Avatar,
   Button,
   Card,
-  Title,
+  Divider,
   Paragraph,
-  Divider
-} from "react-native-paper";
-import { Linking } from "expo";
+  Title
+  } from 'react-native-paper';
+import { Container, Content, View } from 'native-base';
+import { Linking } from 'expo';
 
 export default function CourtDetailScreen({ route, navigation }) {
   // Extract court info from params

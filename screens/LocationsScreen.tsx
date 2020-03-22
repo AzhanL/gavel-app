@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { useQuery } from "@apollo/react-hooks";
-import { GET_COURTS } from "../constants/graphql";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState } from 'react';
 import {
-  Container,
-  Header,
-  Left,
   Body,
-  Right,
   Button,
-  Title,
-  Icon,
+  Container,
   Content,
-  Spinner
-} from "native-base";
-import { List, Menu } from "react-native-paper";
-import { GetCourts, GetCourts_courts } from "../constants/generated/GetCourts";
+  Header,
+  Icon,
+  Left,
+  Right,
+  Spinner,
+  Title
+  } from 'native-base';
+import { GET_COURTS } from '../constants/graphql';
+import { GetCourts, GetCourts_courts } from '../constants/generated/GetCourts';
+import { List, Menu } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useQuery } from '@apollo/react-hooks';
 
 export default function LocationScreen({ navigation }) {
   const { loading, error, data, refetch } = useQuery<GetCourts>(GET_COURTS);
