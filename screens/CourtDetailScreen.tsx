@@ -117,13 +117,26 @@ export default function CourtDetailScreen({ route, navigation }) {
 
                 {/* Phone Number*/}
                 {court_location["phoneNumber"] ? (
-                  <Paragraph>{court_location["phoneNumber"]}</Paragraph>
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <Avatar.Icon size={24} icon="phone" />
+                    <Paragraph
+                      style={{ flex: 1 }}
+                      onPress={() => {
+                        Linking.openURL("tel:" + court_location["phoneNumber"]);
+                      }}
+                    >
+                      {" " + court_location["phoneNumber"]}
+                    </Paragraph>
+                  </View>
                 ) : (
                   <></>
                 )}
                 {/* Phone Number*/}
                 {court_location["faxNumber"] ? (
-                  <Paragraph>{court_location["faxNumber"]}</Paragraph>
+                  <View style={{ flex: 1, flexDirection: "row" }}>
+                    <Avatar.Icon size={24} icon="fax" />
+                    <Paragraph>{" " + court_location["faxNumber"]}</Paragraph>
+                  </View>
                 ) : (
                   <></>
                 )}
@@ -138,7 +151,7 @@ export default function CourtDetailScreen({ route, navigation }) {
 
                   {court_location["operationalDays"] ? (
                     court_location["operationalDays"].map((data, j) => (
-                      <DataTable.Row key={j+1000}>
+                      <DataTable.Row key={j + 1000}>
                         <DataTable.Cell>
                           {dayShortToLong(data["weekDay"])}
                         </DataTable.Cell>
