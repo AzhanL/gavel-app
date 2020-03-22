@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Appbar,
   Searchbar,
@@ -12,11 +12,10 @@ import {
   RadioButton,
   Text
 } from "react-native-paper";
-import { Content, View } from "native-base";
+import { Content, View, Container } from "native-base";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_HEARINGS_BY_PARTYNAME } from "../constants/graphql";
 import { searchHearingsByPartyName_hearings } from "../constants/generated/searchHearingsByPartyName";
-
 export default function HearingsScreen({ navigation }) {
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
@@ -36,6 +35,8 @@ export default function HearingsScreen({ navigation }) {
   const [searchBarValue, setSearchBarValue] = useState("");
   // Check if the user wants to search or not
   const [searching, setSearchingToggle] = useState(false);
+  // Loading search is needed for new search
+  const [loadingSearch, setLoadingSearch] = useState(false);
 
   // Sorted by Category
   const [sortedDataByCategory, setSortedDataByCategory] = useState(null);
@@ -69,12 +70,20 @@ export default function HearingsScreen({ navigation }) {
       onCompleted: query_result => {
         sortData(query_result);
         setSortedDataReady(true);
-        console.log(Object.keys(sortedDataByCategory).length);
+        setLoadingSearch(false);
       }
     }
   );
+
+  useEffect(() => {
+    // Set the data to ready if it was cached
+    if (data && !loading && !error) {
+      setSortedDataReady(true);
+    }
+  });
+
   return (
-    <>
+    <Container>
       {!searching ? (
         // Regular Default Header
         <Appbar.Header style={{ height: 70 }}>
@@ -115,37 +124,35 @@ export default function HearingsScreen({ navigation }) {
       ) : (
         // Search Header
         <Appbar.Header style={{ height: 70 }}>
-          <Searchbar
-            placeholder="Search"
-            onChangeText={value => {
-              setSearchBarValue(value);
-            }}
-            value={searchBarValue}
-            onEndEditing={() => {
-              setSearchingToggle(false);
-            }}
-            onBlur={() => {
-              setSearchingToggle(false);
-            }}
-            onSubmitEditing={() => {
-              setSortedDataReady(false);
-              if (searchSettingValue === "courtFileNumber") {
-                // TODO: Add Search By File Number
-              } else if (searchSettingValue === "partyName") {
-                searchByName({ variables: { partyName: searchBarValue } });
-
-                // Set the data to ready if it was cached
-                if (data && !loading && !error) {
-                  setSortedDataReady(true);
+          <Content padder>
+            <Searchbar
+              placeholder="Search"
+              onChangeText={value => {
+                setSearchBarValue(value);
+              }}
+              value={searchBarValue}
+              onEndEditing={() => {
+                setSearchingToggle(false);
+              }}
+              onBlur={() => {
+                setSearchingToggle(false);
+              }}
+              onSubmitEditing={() => {
+                setSortedDataReady(false);
+                setLoadingSearch(true);
+                if (searchSettingValue === "courtFileNumber") {
+                  // TODO: Add Search By File Number
+                } else if (searchSettingValue === "partyName") {
+                  searchByName({ variables: { partyName: searchBarValue } });
                 }
-              }
-            }}
-          />
+              }}
+            />
+          </Content>
         </Appbar.Header>
       )}
 
       {/* Hearing Categories and List */}
-      <Content padder>
+      <Content padder contentContainerStyle={{}}>
         <View>
           {sortedDataByCategory && sortedDataReady ? (
             <View>
@@ -170,7 +177,7 @@ export default function HearingsScreen({ navigation }) {
                           right={props => (
                             <List.Icon {...props} icon="arrow-right" />
                           )}
-                          style={{backgroundColor: Colors.grey300}}
+                          style={{ backgroundColor: Colors.grey300 }}
                           onPress={() => {
                             navigation.navigate("Modals", {
                               screen: "HearingDetail",
@@ -186,18 +193,20 @@ export default function HearingsScreen({ navigation }) {
                   </List.Accordion>
                 ))
               ) : (
-                <View>
+                <View style={{ flex: 1, alignItems: "center" }}>
                   <Text>No results</Text>
                 </View>
               )}
             </View>
           ) : (
             // Output the progress bar only when the search is loading
-            <View>
-              {loading ? (
-                <ProgressBar color={Colors.blue700} indeterminate={loading} />
+            <View style={{}}>
+              {loading || loadingSearch ? (
+                <ProgressBar color={Colors.blue700} indeterminate={loadingSearch || loading} />
               ) : (
-                <Text>Try Searching</Text>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text>Try Searching</Text>
+                </View>
               )}
             </View>
           )}
@@ -292,6 +301,6 @@ export default function HearingsScreen({ navigation }) {
           <></>
         )}
       </Content>
-    </>
+    </Container>
   );
 }
