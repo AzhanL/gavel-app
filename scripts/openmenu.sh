@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo adb shell key inputevent 82
+sudo adb shell input keyevent 82
