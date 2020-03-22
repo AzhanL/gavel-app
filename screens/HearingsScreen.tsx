@@ -69,6 +69,7 @@ export default function HearingsScreen({ navigation }) {
       onCompleted: query_result => {
         sortData(query_result);
         setSortedDataReady(true);
+        console.log(Object.keys(sortedDataByCategory).length);
       }
     }
   );
@@ -147,33 +148,49 @@ export default function HearingsScreen({ navigation }) {
       <Content padder>
         <View>
           {sortedDataByCategory && sortedDataReady ? (
-            Object.keys(sortedDataByCategory).map((category, i) => (
-              <List.Accordion
-                title={category}
-                key={i}
-                onPress={() => {
-                  removeSearchBar();
-                }}
-              >
-                {sortedDataByCategory[category].map((hearing_details: searchHearingsByPartyName_hearings, j) => (
-                  // Output title
-                  <List.Item
-                    title={hearing_details[outputSettingValue]}
-                    key={j + 10000}
-                    right={props => <List.Icon {...props} icon="arrow-right" />}
+            <View>
+              {Object.keys(sortedDataByCategory).length > 0 ? (
+                Object.keys(sortedDataByCategory).map((category, i) => (
+                  <List.Accordion
+                    title={category}
+                    key={i}
                     onPress={() => {
-                      navigation.navigate("Modals", {
-                        screen: "HearingDetail",
-                        params: {
-                          hearingDetails: hearing_details,
-                          name: category
-                        }
-                      });
+                      removeSearchBar();
                     }}
-                  />
-                ))}
-              </List.Accordion>
-            ))
+                  >
+                    {sortedDataByCategory[category].map(
+                      (
+                        hearing_details: searchHearingsByPartyName_hearings,
+                        j
+                      ) => (
+                        // Output title
+                        <List.Item
+                          title={hearing_details[outputSettingValue]}
+                          key={j + 10000}
+                          right={props => (
+                            <List.Icon {...props} icon="arrow-right" />
+                          )}
+                          style={{backgroundColor: Colors.grey300}}
+                          onPress={() => {
+                            navigation.navigate("Modals", {
+                              screen: "HearingDetail",
+                              params: {
+                                hearingDetails: hearing_details,
+                                name: category
+                              }
+                            });
+                          }}
+                        />
+                      )
+                    )}
+                  </List.Accordion>
+                ))
+              ) : (
+                <View>
+                  <Text>No results</Text>
+                </View>
+              )}
+            </View>
           ) : (
             // Output the progress bar only when the search is loading
             <View>
