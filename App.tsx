@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text} from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -16,6 +16,7 @@ import getTheme from "./native-base-theme/components";
 import gavelapptheme from "./native-base-theme/variables/gavelapp.js";
 import { StyleProvider } from "native-base";
 import { myconfig } from "./navigation/ModalNavigator";
+import { CREATE_TABLES, DatabaseContext, database } from "./constants/database";
 
 import { Provider as PaperProvider } from "react-native-paper";
 import { GavelPaperTheme } from "./styles/PaperThemeConfig";
@@ -40,7 +41,9 @@ const _ApolloClient = new ApolloClient(_ApolloClientOptions);
 
 // Entry App
 export default function App(props) {
-  const [initialNavigationState, setInitialNavigationState] = React.useState();
+  const [initialNavigationState, setInitialNavigationState] = React.useState(
+    null
+  );
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
@@ -61,11 +64,11 @@ export default function App(props) {
           Roboto: require("native-base/Fonts/Roboto.ttf"),
           Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
         });
-        await Font.loadAsync({
-          Roboto: require("native-base/Fonts/Roboto.ttf"),
-          Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-          ...Ionicons.font
+
+        database.transaction(transaction => {
+          transaction.executeSql(CREATE_TABLES);
         });
+        // Create
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
@@ -81,32 +84,34 @@ export default function App(props) {
     return null;
   } else {
     return (
-      <PaperProvider theme={GavelPaperTheme}>
-        <StyleProvider style={getTheme(gavelapptheme)}>
-          <NavigationContainer
-            ref={containerRef}
-            initialState={initialNavigationState}
-          >
+      <DatabaseContext.Provider value={database}>
+        <PaperProvider theme={GavelPaperTheme}>
+          <StyleProvider style={getTheme(gavelapptheme)}>
             <ApolloProvider client={_ApolloClient}>
-              <RootStack.Navigator
-                mode="modal"
-                headerMode="none"
-                initialRouteName="Home"
-                screenOptions={{
-                  gestureDirection: "horizontal",
-                  transitionSpec: {
-                    open: myconfig,
-                    close: myconfig
-                  }
-                }}
+              <NavigationContainer
+                ref={containerRef}
+                initialState={initialNavigationState}
               >
-                <RootStack.Screen name="Home" component={MainMenuNavigator} />
-                <RootStack.Screen name="Modals" component={ModalNavigator} />
-              </RootStack.Navigator>
+                <RootStack.Navigator
+                  mode="card"
+                  headerMode="none"
+                  initialRouteName="Root"
+                  screenOptions={{
+                    gestureDirection: "horizontal",
+                    transitionSpec: {
+                      open: myconfig,
+                      close: myconfig
+                    }
+                  }}
+                >
+                  <RootStack.Screen name="Root" component={MainMenuNavigator} />
+                  <RootStack.Screen name="Modals" component={ModalNavigator} />
+                </RootStack.Navigator>
+              </NavigationContainer>
             </ApolloProvider>
-          </NavigationContainer>
-        </StyleProvider>
-      </PaperProvider>
+          </StyleProvider>
+        </PaperProvider>
+      </DatabaseContext.Provider>
     );
   }
 }
