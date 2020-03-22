@@ -14,7 +14,7 @@ export default function Notifications() {
     link: new HttpLink({uri: 'http://gavelapi.ontariotechu.xyz:8000/graphql/'}),
     cache: new InMemoryCache()
   });
-
+  
 
   const Gavel_Query = gql`
     query{
@@ -24,11 +24,13 @@ export default function Notifications() {
       }
     }
   `;
-
-  const { data } = useQuery(Gavel_Query);
+  const [dataReady, setDataReady] = React.useState(false);
+  const [stateData, setStateData] = React.useState(null);
+  client.query({
+    query: Gavel_Query
+  }).then(({data}) => {setStateData(data); console.log(stateData); setDataReady(true)});
 
     return (
-      <ApolloProvider client={client}>
         <View>
           <Header
               leftComponent={{ icon: 'menu', size: 30, color: '#fff', onPress:() => {navigation.toggleDrawer()} }}
@@ -37,16 +39,21 @@ export default function Notifications() {
           />
           <View style={{alignItems: 'center'}}>
               <View>
-                {data.locations.map(locations => (
-                  <Text key={locations.id} value={locations.city}>
-                    {locations.city}
+                {
+                  dataReady? <> 
+                  {stateData['locations'].map(location => (
+                  
+                  <Text key={location['id']} value={location['city']}>
+                    {location['city']}
                   </Text>
                 ))}
+                  </> : <></>
+                }
+                
               </View>
           <Image source={require('../assets/logo.png')}  style={{ width: 340, height: 320, alignContent:'center', marginTop:90, }} />
           </View>
         </View>
-      </ApolloProvider>
   
     );
   
