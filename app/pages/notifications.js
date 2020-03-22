@@ -28,7 +28,7 @@ export default function Notifications() {
   const [stateData, setStateData] = React.useState(null);
   client.query({
     query: Gavel_Query
-  }).then(({data}) => {setStateData(data); console.log(stateData); setDataReady(true)});
+  }).then(({data}) => {setStateData(data);setDataReady(true)});
 
     return (
         <View>
