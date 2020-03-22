@@ -42,3 +42,4 @@ export const SEARCH_HEARINGS_BY_PARTYNAME = gql`
     }
   }
 `;
+
