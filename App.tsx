@@ -16,7 +16,6 @@ import getTheme from "./native-base-theme/components";
 import gavelapptheme from "./native-base-theme/variables/gavelapp.js";
 import { StyleProvider } from "native-base";
 import { myconfig } from "./navigation/ModalNavigator";
-import { CREATE_TABLES, DatabaseContext, database } from "./constants/database";
 
 import { Provider as PaperProvider } from "react-native-paper";
 import { GavelPaperTheme } from "./styles/PaperThemeConfig";
@@ -65,9 +64,6 @@ export default function App(props) {
           Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
         });
 
-        database.transaction(transaction => {
-          transaction.executeSql(CREATE_TABLES);
-        });
         // Create
       } catch (e) {
         // We might want to provide this error information to an error reporting service
@@ -84,7 +80,6 @@ export default function App(props) {
     return null;
   } else {
     return (
-      <DatabaseContext.Provider value={database}>
         <PaperProvider theme={GavelPaperTheme}>
           <StyleProvider style={getTheme(gavelapptheme)}>
             <ApolloProvider client={_ApolloClient}>
@@ -111,7 +106,6 @@ export default function App(props) {
             </ApolloProvider>
           </StyleProvider>
         </PaperProvider>
-      </DatabaseContext.Provider>
     );
   }
 }
