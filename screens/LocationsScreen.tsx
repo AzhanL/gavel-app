@@ -13,7 +13,7 @@ import {
   } from 'native-base';
 import { GET_COURTS } from '../constants/graphql';
 import { GetCourts, GetCourts_courts } from '../constants/generated/GetCourts';
-import { List, Menu } from 'react-native-paper';
+import { List, Menu, ActivityIndicator, Colors } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -32,14 +32,10 @@ export default function LocationScreen({ navigation }) {
   if (data && !courtInfo && !loading && !error) {
     setCourtInfo({ data: data.courts });
 
-    // Extract provincial general courts
-    let provincial_courts: [Object] = [0];
-    let provincial_superior_courts: [Object] = [0];
-    let provincial_appeal_courts: [Object] = [0];
-    // Extract the initializer
-    provincial_courts.pop();
-    provincial_superior_courts.pop();
-    provincial_appeal_courts.pop();
+    // Initialize provincial courts arrays
+    let provincial_courts: Object[] = [];
+    let provincial_superior_courts: Object[] = [];
+    let provincial_appeal_courts: Object[] = [];
 
     // Loop through every court in the province
     data.courts?.forEach(court => {
@@ -170,7 +166,7 @@ export default function LocationScreen({ navigation }) {
             </List.Accordion>
           </>
         ) : (
-          <Spinner color="#20272F" />
+          <ActivityIndicator animating={true} color={Colors.grey700} />
         )}
       </Content>
     </Container>
