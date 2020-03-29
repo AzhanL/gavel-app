@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 );
 `
 export const SUBSCRIBE = `
-INSERT INTO subscriptions(hearing_id, file_number, viewed)
-VALUES(?, ?, ?);
+INSERT INTO subscriptions(hearing_id, file_number)
+VALUES(?, ?);
 `
 export const UNSUBSCRIBE = `
 DELETE FROM subscriptions 
