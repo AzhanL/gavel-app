@@ -1,4 +1,6 @@
 #!/bin/bash
+sudo adb kill-server;
+sudo adb start-server;
 sudo adb reverse tcp:19000 tcp:19000
 sudo adb reverse tcp:19001 tcp:19001
 sudo adb reverse tcp:19002 tcp:19002
