@@ -6,8 +6,7 @@ import {
   SUBSCRIPTIONS_BY_FILENUMBER
 } from "./database";
 import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
-import { useState } from "react";
-import { TempStore, storedata } from "../redux/store";
+
 export const resolvers = {
   Mutation: {
     // Subscribe to new hearings by adding them to the database
@@ -22,15 +21,11 @@ export const resolvers = {
               [variables.hearingID, variables.courtFileNumber],
               // If successful return true
               (_, result) => {
-                console.log("Inserted Successfully");
-                response = true;
                 resolve(true);
               },
 
               // If failure the return false
               (_, error) => {
-                console.log("Inserted Failure");
-                response = false;
                 reject(false);
                 return false;
               }
@@ -63,12 +58,10 @@ export const resolvers = {
               [variables.courtFileNumber],
               // If successful return true
               (_, result) => {
-                console.log("Inserted Successfully");
                 resolve(true);
               },
               // If failure the return false
               (_, error) => {
-                console.log("Inserted Failure");
                 reject(false);
                 return false;
               }
