@@ -211,7 +211,6 @@ export default function HearingDetailScreen({ navigation, route }) {
 
   return (
     <Container>
-      
       {/* Title bar */}
       <Appbar.Header style={{ height: 70 }}>
         <Appbar.BackAction
