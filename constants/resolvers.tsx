@@ -1,9 +1,9 @@
 import {
   database,
-  SUBSCRIBE,
   UNSUBSCRIBE,
   SUBSCRIPTIONS,
-  SUBSCRIPTIONS_BY_FILENUMBER
+  SUBSCRIPTIONS_BY_FILENUMBER,
+  ADD_HEARING
 } from "./database";
 import {
   Subscriptions_subscriptions,
@@ -13,42 +13,54 @@ import {
 export const resolvers = {
   Mutation: {
     // Subscribe to new hearings by adding them to the database
-    subscribeHearing: async (_root, variables, _context, _info) => {
+    // Add unviewed hearings (purpose of notification)
+    addHearing: async (_root, variables, _context, _info) => {
+      let return_val = true;
       async function QueryDB() {
         return new Promise((resolve, reject) => {
-          database.transaction(tx => {
-            tx.executeSql(
-              // Use the subscribe query
-              SUBSCRIBE,
-              // Pass the parameters
-              [variables.hearingID, variables.courtFileNumber],
-              // If successful return true
-              (_, result) => {
-                resolve(true);
-              },
+          database.transaction(
+            tx => {
+              variables.hearings.forEach(hearing => {
+                console.log(hearing);
+                tx.executeSql(
+                  // Use the subscribe query
+                  ADD_HEARING,
+                  // Pass the parameters
+                  [
+                    parseInt(hearing.id),
+                    hearing.courtFileNumber,
+                    hearing.viewed ? 0 : 1
+                  ],
+                  // If successful return true
+                  (_, result) => {},
 
-              // If failure the return false
-              (_, error) => {
-                reject(false);
-                return false;
-              }
-            );
-          });
+                  // If failure the return false
+                  (_, error) => {
+                    console.log(error);
+                    return_val = false;
+                    return false;
+                  }
+                );
+              });
+            },
+            error => {
+              console.log(error);
+              reject(false);
+            },
+            () => {
+              resolve(true);
+            }
+          );
         });
       }
       // Wait for the response from the database before returning anything
       // if successfull then return true else retrun false
-      await QueryDB()
-        .then(value => {
-          return true;
-        })
-        .catch(() => {
-          return false;
-        });
-      return false;
+      await QueryDB();
+      return return_val;
     },
     // Unsubscribe to hearings to removing them from the database
     unsubscribeHearing: async (_root, variables, _context, _info) => {
+      let return_val = false;
       // Async function to query the database
       async function QueryDB() {
         return new Promise((resolve, reject) => {
@@ -61,10 +73,12 @@ export const resolvers = {
               [variables.courtFileNumber],
               // If successful return true
               (_, result) => {
+                return_val = true;
                 resolve(true);
               },
               // If failure the return false
               (_, error) => {
+                return_val = false;
                 reject(false);
                 return false;
               }
@@ -74,14 +88,8 @@ export const resolvers = {
       }
       // Wait for the response from the database before returning anything
       // if successfull then return true else retrun false
-      await QueryDB()
-        .then(() => {
-          return true;
-        })
-        .catch(() => {
-          return false;
-        });
-      return false;
+      await QueryDB();
+      return return_val;
     }
   },
   Query: {

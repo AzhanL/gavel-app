@@ -4,14 +4,13 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: SubscribeHearing
+// GraphQL mutation operation: AddHearings
 // ====================================================
 
-export interface SubscribeHearing {
-  subscribeHearing: boolean;
+export interface AddHearings {
+  addHearing: boolean;
 }
 
-export interface SubscribeHearingVariables {
-  courtFileNumber: string;
-  hearingID: number;
+export interface AddHearingsVariables {
+  hearings: ClientDBHearingType[];
 }

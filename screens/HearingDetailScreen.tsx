@@ -16,16 +16,19 @@ import {
 import { Body, Container, Content } from "native-base";
 import { SearchHearingsByPartyName_hearings } from "../constants/generated/SearchHearingsByPartyName";
 import { SearchHearingsByCourtFileNumber } from "../constants/generated/SearchHearingsByCourtFileNumber";
+import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
 import { IsSubscribedTo } from "../constants/generated/IsSubscribedTo";
-import { Subscriptions } from "../constants/generated/Subscriptions";
+import {
+  AddHearings,
+  AddHearingsVariables
+} from "../constants/generated/AddHearings";
 import { Text } from "react-native-paper";
-import { DatabaseContext, SUBSCRIBE, UNSUBSCRIBE } from "../constants/database";
+import { DatabaseContext, UNSUBSCRIBE } from "../constants/database";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/react-hooks";
 import {
-  SUBSCRIBE_HEARING,
+  ADD_HEARING,
   UNSUBSCRIBE_HEARING,
   SEARCH_HEARINGS_BY_FILENUMBER,
-  SUBSCRIPTIONS,
   IS_SUBSCRIBED_TO
 } from "../constants/graphql";
 import { View } from "react-native";
@@ -33,6 +36,10 @@ import { View } from "react-native";
 // TODO: Add a way to sync ID changes and location changes
 
 export default function HearingDetailScreen({ navigation, route }) {
+  // Manage bookmark states
+  const [bookmarked, setBookmarked] = useState(false);
+  const [bookmarkData, setBookmarkData] = useState(null);
+
   // Get the database
   const database = useContext(DatabaseContext);
 
@@ -49,6 +56,24 @@ export default function HearingDetailScreen({ navigation, route }) {
   } = useQuery<SearchHearingsByCourtFileNumber>(SEARCH_HEARINGS_BY_FILENUMBER, {
     variables: {
       courtFileNumber: court_file_number
+    },
+    onCompleted: async data => {
+      // On completion formulate the data to gets sent for bookmarking
+      let hearings_array = [];
+
+      // Each hearing gets added to list
+      data.hearings.forEach(hearing => {
+        // Formulate an individual hearing
+        let hearing_var: Subscriptions_subscriptions = {
+          __typename: "ClientDBHearingType",
+          id: hearing.id,
+          courtFileNumber: hearing.courtFileNumber,
+          viewed: true
+        };
+        // Push it to the list
+        hearings_array.push(hearing_var);
+      });
+      setBookmarkData(hearings_array);
     }
   });
 
@@ -74,7 +99,11 @@ export default function HearingDetailScreen({ navigation, route }) {
   const [
     subscribe,
     { data: subscribe_data, loading: subscribe_loading, error: subscibe_error }
-  ] = useMutation(SUBSCRIBE_HEARING);
+  ] = useMutation<AddHearings>(ADD_HEARING, {
+    variables: {
+      hearings: bookmarkData
+    }
+  });
   const [
     unsubscribe,
     {
@@ -86,9 +115,6 @@ export default function HearingDetailScreen({ navigation, route }) {
 
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
-
-  // Manage bookmark states
-  const [bookmarked, setBookmarked] = useState(false);
 
   // Snackbar constants
   const [snackbarVisibility, setSnackbarVisibility] = useState(false);
@@ -104,17 +130,10 @@ export default function HearingDetailScreen({ navigation, route }) {
       !loading_hearings &&
       !error_hearings
     ) {
-      all_hearings.hearings.forEach(hearing => {
-        subscribe({
-          variables: {
-            courtFileNumber: court_file_number,
-            hearingID: hearing.id
-          }
-        });
-
-        setSnackbarMessage("File Number Bookmarked");
-        setSnackbarVisibility(true);
-      });
+      // Subscribe/Bookmark and give a notification
+      subscribe();
+      setSnackbarMessage("File Number Bookmarked");
+      setSnackbarVisibility(true);
     } else if (!all_hearings && (loading_hearings || error_hearings)) {
       setSnackbarMessage("Error Bookmarking");
       setSnackbarVisibility(true);
@@ -192,6 +211,7 @@ export default function HearingDetailScreen({ navigation, route }) {
 
   return (
     <Container>
+      
       {/* Title bar */}
       <Appbar.Header style={{ height: 70 }}>
         <Appbar.BackAction
@@ -222,6 +242,17 @@ export default function HearingDetailScreen({ navigation, route }) {
           <Menu.Item title="Placeholder" onPress={() => {}} key={1} />
         </Menu>
       </Appbar.Header>
+      {/* Extra loading */}
+      {!loading_hearings &&
+      (subscription_status_loading ||
+        subscribe_loading ||
+        unsubscribe_loading) ? (
+        <View>
+          <ProgressBar indeterminate={true} color="#20272F" />
+        </View>
+      ) : (
+        <></>
+      )}
       {/* Content  - Display all the hearings that have taken place*/}
       {all_hearings ? (
         <Content padder>
