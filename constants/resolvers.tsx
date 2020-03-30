@@ -5,7 +5,10 @@ import {
   SUBSCRIPTIONS,
   SUBSCRIPTIONS_BY_FILENUMBER
 } from "./database";
-import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
+import {
+  Subscriptions_subscriptions,
+  Subscriptions
+} from "../constants/generated/Subscriptions";
 
 export const resolvers = {
   Mutation: {
@@ -33,16 +36,16 @@ export const resolvers = {
           });
         });
       }
+      // Wait for the response from the database before returning anything
+      // if successfull then return true else retrun false
       await QueryDB()
         .then(value => {
           return true;
         })
         .catch(() => {
           return false;
-        })
-        .finally(() => {
-          return false;
         });
+      return false;
     },
     // Unsubscribe to hearings to removing them from the database
     unsubscribeHearing: async (_root, variables, _context, _info) => {
@@ -70,16 +73,15 @@ export const resolvers = {
         });
       }
       // Wait for the response from the database before returning anything
+      // if successfull then return true else retrun false
       await QueryDB()
         .then(() => {
           return true;
         })
         .catch(() => {
           return false;
-        })
-        .finally(() => {
-          return false;
         });
+      return false;
     }
   },
   Query: {
@@ -93,10 +95,14 @@ export const resolvers = {
           database.transaction(tx => {
             // Query and get all the subscriptions
             tx.executeSql(
-              // Use the subscribition query
-              SUBSCRIPTIONS,
-              // No variables
-              undefined,
+              // The query is dependant on whether or not a filenumber is provider or not
+              variables.courtFileNumber
+                ? SUBSCRIPTIONS_BY_FILENUMBER
+                : SUBSCRIPTIONS,
+              // If a the file number is provided then filter it out
+              variables.courtFileNumber
+                ? [variables.courtFileNumber]
+                : undefined,
               // If successful return push each item into the formatted_rows for return
               (_, result) => {
                 result.rows["_array"].forEach(row => {
@@ -121,9 +127,49 @@ export const resolvers = {
       }
       // Wait for the database to finish querying and getting the response
       await QueryDB();
-
+      let return_subscription: Subscriptions = {
+        subscriptions: formatted_rows
+      };
       // Return the formatted rows; if none then returns empty array
-      return formatted_rows;
+      console.log(return_subscription);
+      return return_subscription;
+    },
+    isSubscribedTo: async (_root, variables, { cache }, _info) => {
+      let return_value = false;
+      async function QueryDB() {
+        return new Promise((resolve, reject) => {
+          database.transaction(tx => {
+            // Execute sql in transaction
+            tx.executeSql(
+              SUBSCRIPTIONS_BY_FILENUMBER,
+              // Pass the file number that is being checked for
+              [variables.courtFileNumber],
+              (_, result) => {
+                // Check if there are > 1 subscriptions with the same file number
+                if (result.rows.length >= 1) {
+                  return_value = true;
+                  resolve(true);
+                } else resolve(false);
+              },
+              // On an error, reject the promise
+              (_, error) => {
+                console.log(error);
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      }
+
+      // Return the subscription status; on error return false
+      await QueryDB()
+        .then(existence => {})
+        .catch(reason => {
+          console.log(reason);
+        });
+
+      return return_value;
     }
   }
 };
