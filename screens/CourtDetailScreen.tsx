@@ -1,5 +1,5 @@
-import React from 'react';
-import { Appbar, DataTable } from 'react-native-paper';
+import React from "react";
+import { Appbar, DataTable } from "react-native-paper";
 import {
   Avatar,
   Button,
@@ -7,9 +7,9 @@ import {
   Divider,
   Paragraph,
   Title
-  } from 'react-native-paper';
-import { Container, Content, View } from 'native-base';
-import { Linking } from 'expo';
+} from "react-native-paper";
+import { Container, Content, View } from "native-base";
+import { Linking } from "expo";
 
 export default function CourtDetailScreen({ route, navigation }) {
   // Extract court info from params
@@ -61,7 +61,7 @@ export default function CourtDetailScreen({ route, navigation }) {
       }
     }
   }
-
+  const buttonMode: String = "text";
   return (
     <Container>
       <Appbar.Header style={{ height: 70 }}>
@@ -181,8 +181,21 @@ export default function CourtDetailScreen({ route, navigation }) {
                 </DataTable>
               </Card.Content>
               {/* <Card.Cover source={{ uri: "https://picsum.photos/700" }} /> */}
-              <Card.Actions>
+              <Card.Actions style={{ justifyContent: "space-between" }}>
                 {/* Formulate the url and open it */}
+                {court_location["phoneNumber"] ? (
+                  <Button
+                    onPress={() => {
+                      Linking.openURL("tel:" + court_location["phoneNumber"]);
+                    }}
+                    mode={buttonMode as any}
+                  >
+                    Call
+                  </Button>
+                ) : (
+                  <></>
+                )}
+
                 <Button
                   onPress={() => {
                     Linking.openURL(
@@ -195,6 +208,7 @@ export default function CourtDetailScreen({ route, navigation }) {
                         ].join(",")
                     );
                   }}
+                  mode={buttonMode as any}
                 >
                   Open in Google Maps
                 </Button>
