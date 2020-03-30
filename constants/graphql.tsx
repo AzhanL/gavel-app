@@ -8,7 +8,7 @@ export const CLIENT_TYPEDEFS = gql`
     viewed: Boolean!
   }
   extend type Mutation {
-    subscribeHearing(courtFileNumber: String!, hearingID: Int): Boolean!
+    addHearing(hearings: [ClientDBHearingType!]!): Boolean!
     unsubscribeHearing(courtFileNumber: String!): Boolean!
   }
   extend type Query {
@@ -17,10 +17,9 @@ export const CLIENT_TYPEDEFS = gql`
   }
 `;
 
-export const SUBSCRIBE_HEARING = gql`
-  mutation SubscribeHearing($courtFileNumber: String!, $hearingID: Int!) {
-    subscribeHearing(courtFileNumber: $courtFileNumber, hearingID: $hearingID)
-      @client
+export const ADD_HEARING = gql`
+  mutation AddHearings($hearings: [ClientDBHearingType!]!) {
+    addHearing(hearings: $hearings) @client
   }
 `;
 export const UNSUBSCRIBE_HEARING = gql`
