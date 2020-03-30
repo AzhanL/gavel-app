@@ -11,12 +11,12 @@ export const CREATE_TABLES = `
 CREATE TABLE IF NOT EXISTS subscriptions (
   hearing_id PRIMARY KEY,
   file_number VARCHAR(255) NOT NULL,
-  viewed BOOLEAN DEFAULT 0
+  viewed BOOLEAN DEFAULT 0 NOT NULL
 );
 `
 export const SUBSCRIBE = `
-INSERT INTO subscriptions(hearing_id, file_number)
-VALUES(?, ?);
+INSERT INTO subscriptions(hearing_id, file_number, viewed)
+VALUES(?, ?, 1);
 `
 export const UNSUBSCRIBE = `
 DELETE FROM subscriptions 
