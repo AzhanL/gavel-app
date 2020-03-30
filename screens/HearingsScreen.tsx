@@ -15,7 +15,7 @@ import {
 import { Content, View, Container } from "native-base";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_HEARINGS_BY_PARTYNAME } from "../constants/graphql";
-import { searchHearingsByPartyName_hearings } from "../constants/generated/searchHearingsByPartyName";
+import { SearchHearingsByPartyName_hearings } from "../constants/generated/SearchHearingsByPartyName";
 export default function HearingsScreen({ navigation }) {
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
@@ -167,7 +167,7 @@ export default function HearingsScreen({ navigation }) {
                   >
                     {sortedDataByCategory[category].map(
                       (
-                        hearing_details: searchHearingsByPartyName_hearings,
+                        hearing_details: SearchHearingsByPartyName_hearings,
                         j
                       ) => (
                         // Output title
@@ -182,8 +182,8 @@ export default function HearingsScreen({ navigation }) {
                             navigation.navigate("Modals", {
                               screen: "HearingDetail",
                               params: {
-                                hearingDetails: hearing_details,
-                                name: category
+                                courtFileNumber: hearing_details.courtFileNumber,
+                                hearingID: hearing_details.id
                               }
                             });
                           }}

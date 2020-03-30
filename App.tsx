@@ -1,24 +1,27 @@
-import React from "react";
-import { StyleSheet, Text } from "react-native";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import * as Font from "expo-font";
+import gavelapptheme from "./native-base-theme/variables/gavelapp.js";
+import getTheme from "./native-base-theme/components";
 import MainMenuNavigator from "./navigation/BottomNavigator";
 import ModalNavigator from "./navigation/ModalNavigator";
-import { ApolloProvider } from "@apollo/react-common";
-import { ApolloClient } from "apollo-boost";
-import { HttpLink } from "apollo-link-http";
-import { InMemoryCache } from "apollo-cache-inmemory";
+import React from "react";
 import useLinking from "./navigation/useLinking";
-import { SplashScreen } from "expo";
-import * as Font from "expo-font";
-import getTheme from "./native-base-theme/components";
-import gavelapptheme from "./native-base-theme/variables/gavelapp.js";
-import { StyleProvider } from "native-base";
-import { myconfig } from "./navigation/ModalNavigator";
-
-import { Provider as PaperProvider } from "react-native-paper";
+import { ApolloClient, ApolloClientOptions } from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-common";
+import { CLIENT_TYPEDEFS } from "./constants/graphql";
+import { CREATE_TABLES, database, DatabaseContext } from "./constants/database";
+import { createStackNavigator } from "@react-navigation/stack";
 import { GavelPaperTheme } from "./styles/PaperThemeConfig";
+import { HttpLink } from "apollo-link-http";
+import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { myconfig } from "./navigation/ModalNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import { Provider as PaperProvider } from "react-native-paper";
+import { resolvers as client_resolvers } from "./constants/resolvers";
+import { SplashScreen } from "expo";
+import { StyleProvider } from "native-base";
+import { StyleSheet, Text } from "react-native";
+
 const RootStack = createStackNavigator();
 
 // Create ApolloHttpLink object
@@ -31,9 +34,11 @@ const _InMemoryCacheConfig = {};
 const _InMemoryCache = new InMemoryCache(_InMemoryCacheConfig);
 
 // Create apollo client options
-const _ApolloClientOptions = {
+const _ApolloClientOptions: ApolloClientOptions<NormalizedCacheObject> = {
   link: _ApolloLink,
-  cache: _InMemoryCache
+  cache: _InMemoryCache,
+  resolvers: client_resolvers,
+  typeDefs: CLIENT_TYPEDEFS
 };
 // Create the apollo client
 const _ApolloClient = new ApolloClient(_ApolloClientOptions);
@@ -64,7 +69,18 @@ export default function App(props) {
           Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
         });
 
-        // Create
+        // Create Tables
+        database.transaction(transaction => {
+          transaction.executeSql(
+            CREATE_TABLES,
+            undefined,
+            () => console.log("Successfully created SQLite database"),
+            error => {
+              console.log(error);
+              return false;
+            }
+          );
+        });
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
@@ -80,6 +96,7 @@ export default function App(props) {
     return null;
   } else {
     return (
+      <DatabaseContext.Provider value={database}>
         <PaperProvider theme={GavelPaperTheme}>
           <StyleProvider style={getTheme(gavelapptheme)}>
             <ApolloProvider client={_ApolloClient}>
@@ -106,6 +123,7 @@ export default function App(props) {
             </ApolloProvider>
           </StyleProvider>
         </PaperProvider>
+      </DatabaseContext.Provider>
     );
   }
 }
