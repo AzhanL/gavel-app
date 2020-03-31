@@ -7,7 +7,8 @@ import {
   List,
   Card,
   Button,
-  Badge
+  Badge,
+  Colors
 } from "react-native-paper";
 import { useLazyQuery, useQuery } from "@apollo/react-hooks";
 import {
@@ -65,14 +66,11 @@ export default function HomeScreen({ navigation }) {
     <Container>
       {/* App bar  */}
       <Appbar.Header style={{ height: 70 }}>
-        <Appbar.BackAction
-          onPress={() => {
-            navigation.goBack();
-          }}
-        />
-        <Appbar.Content title="Home" />
+        <Appbar.Action icon="home"/>
+        <Appbar.Content title="HOME" />
         <Appbar.Action icon="dots-vertical" />
       </Appbar.Header>
+
 
       {/* Loading circle at start */}
       {subscriptions_loading ? (
@@ -88,43 +86,52 @@ export default function HomeScreen({ navigation }) {
       {/* Display content when done loading*/}
       {!subscriptions_loading ? (
         <Content padder>
+           <List.Accordion  title={`SUBSCRIBED CASES (${sortedSubscriptions.length})`} left={props => <List.Icon {...props} icon="bookmark" />}>
           {sortedSubscriptions.map((subscription, i) => (
-            <List.Item
-              key={i}
-              title={subscription.courtFileNumber}
-              // Set the description to "n new hearings"
-              description={
-                subscription.itemCount > 0
-                  ? subscription.itemCount.toString() +
-                    " new " +
-                    // Plural/Singular
-                    (subscription.itemCount >= 1 ? "hearings" : "hearing")
-                  : ""
-              }
-              left={props => <List.Icon {...props} icon="folder-account" />}
-              right={props => <List.Icon {...props} icon="arrow-right" />}
-              onPress={() => {
-                // Open the navigation
-                navigation.navigate("Modals", {
-                  screen: "HearingDetail",
-                  params: {
-                    courtFileNumber: subscription.courtFileNumber
-                  }
-                });
-              }}
-              // Bold the title if there are any unread hearings
-              titleStyle={
-                subscription.itemCount > 0
-                  ? {
-                      fontWeight: "bold"
+           
+              <List.Item
+                key={i}
+                title={subscription.courtFileNumber}
+                style={{ backgroundColor: Colors.grey300 }}
+                // Set the description to "n new hearings"
+                description={
+                  subscription.itemCount > 0
+                    ? subscription.itemCount.toString() +
+                      " new " +
+                      // Plural/Singular
+                      (subscription.itemCount >= 1 ? "hearings" : "hearing")
+                    : ""
+                }
+                left={props => <List.Icon {...props} icon="folder-account" />}
+                right={props => <List.Icon {...props} icon="arrow-right" />}
+                onPress={() => {
+                  // Open the navigation
+                  navigation.navigate("Modals", {
+                    screen: "HearingDetail",
+                    params: {
+                      courtFileNumber: subscription.courtFileNumber
                     }
-                  : {}
-              }
-            />
+                  });
+                }}
+                // Bold the title if there are any unread hearings
+                titleStyle={
+                  subscription.itemCount > 0
+                    ? {
+                        fontWeight: "bold"
+                      }
+                    : {}
+                }
+              />
+             
           ))}
+          </List.Accordion>
         </Content>
       ) : (
-        <></>
+        <>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Text style={{marginTop:200, fontWeight:'bold'}}>No bookmarks yet</Text>
+          </View>
+        </>
       )}
     </Container>
   );
