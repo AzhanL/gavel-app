@@ -126,32 +126,6 @@ export default function HomeScreen({ navigation }) {
       ) : (
         <></>
       )}
-      <Button
-        onPress={() => {
-          database.transaction(tx => {
-            tx.executeSql(`UPDATE subscriptions SET unread = 1 WHERE 1=1`);
-          });
-        }}
-      >
-        RESET ALL VIEWS
-      </Button>
-      <Button
-      
-      onPress={() => {
-        database.transaction(tx => {
-          tx.executeSql(`
-          DELETE FROM subscriptions WHERE hearing_id = (SELECT hearing_id FROM subscriptions WHERE file_number="CR18-15-00784" LIMIT 1 )
-          `, undefined, (_, result) => {
-            console.log("Successfully deleted some hearings");
-          }, (_, error) => {
-            console.log("Error Deleting some hearings");
-            console.log(error);
-            return false;
-          });
-        });
-      }}>
-        DELETE SOME Hearings
-      </Button>
     </Container>
   );
 }

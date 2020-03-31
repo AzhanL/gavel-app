@@ -58,21 +58,8 @@ TaskManager.defineTask("HearingUpdateTask", ({ data, error }) => {
             fetchPolicy: "no-cache"
           })
           .then(api_result_min => {
-            console.log(
-              `Here are the hearings for ${localhearing.courtFileNumber}`
-            );
-            console.log(api_result_min.data.hearings);
             // If there are more hearings on the server than in the client -> post notification
-            console.log(
-              `API: ${api_result_min.data.hearings.length}   LOCAL: ${localhearing.itemCount}`
-            );
             if (api_result_min.data.hearings.length > localhearing.itemCount) {
-              console.log(
-                `${api_result_min.data.hearings.length -
-                  localhearing.itemCount} more hearings for ${
-                  localhearing.courtFileNumber
-                }`
-              );
               // Get all hearing with the same court file number - FULL - For insertion
               _ApolloClient
                 .query<SearchHearingsByCourtFileNumber>({
