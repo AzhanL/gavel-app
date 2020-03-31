@@ -87,8 +87,8 @@ export default function HearingsScreen({ navigation }) {
       {!searching ? (
         // Regular Default Header
         <Appbar.Header style={{ height: 70 }}>
-          <Appbar.BackAction onPress={() => navigation.goBack()} />
-          <Appbar.Content title={"Hearings"} subtitle={""} />
+          <Appbar.Action icon="gavel"/>
+          <Appbar.Content title={"HEARINGS"} subtitle={""} />
 
           <Appbar.Action
             icon="magnify"
@@ -199,7 +199,7 @@ export default function HearingsScreen({ navigation }) {
                 ))
               ) : (
                 <View style={{ flex: 1, alignItems: "center" }}>
-                  <Text>No results</Text>
+                  <Text style={{marginTop:200, fontWeight:'bold'}}>No results</Text>
                 </View>
               )}
             </View>
@@ -213,7 +213,7 @@ export default function HearingsScreen({ navigation }) {
                 />
               ) : (
                 <View style={{ flex: 1, alignItems: "center" }}>
-                  <Text>Try Searching</Text>
+                  <Text style={{marginTop:200, fontWeight:'bold'}}>Try Searching</Text>
                 </View>
               )}
             </View>

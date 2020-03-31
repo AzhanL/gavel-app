@@ -11,9 +11,10 @@ import {
   Spinner,
   Title
   } from 'native-base';
+
 import { GET_COURTS } from '../constants/graphql';
 import { GetCourts, GetCourts_courts } from '../constants/generated/GetCourts';
-import { List, Menu, ActivityIndicator, Colors } from 'react-native-paper';
+import { List, Menu, ActivityIndicator, Colors, Appbar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -65,43 +66,12 @@ export default function LocationScreen({ navigation }) {
   return (
     <Container>
       {/* TODO: Change header from native-base to appbar from papertheme */}
-      <Header>
-        <Left>
-          <Button transparent>
-            <MaterialCommunityIcons
-              name="arrow-left"
-              size={24}
-              color="white"
-              onPress={() => navigation.goBack()}
-            />
-          </Button>
-        </Left>
-        <Body>
-          <Title>Locations</Title>
-        </Body>
-        <Right>
-          <Button transparent>
-            <Icon name="search" />
-          </Button>
-          <Button transparent>
-            <Menu
-              visible={moreMenuVisible}
-              onDismiss={() => setMoreMenuVisiblity(false)}
-              anchor={
-                <Icon name="more" onPress={() => setMoreMenuVisiblity(true)} />
-              }
-            >
-              <Menu.Item
-                title="Refresh Locations"
-                onPress={() => {
-                  refetch();
-                }}
-                key={1}
-              />
-            </Menu>
-          </Button>
-        </Right>
-      </Header>
+        {/* App bar  */}
+        <Appbar.Header style={{ height: 70 }}>
+        <Appbar.Action icon="map"/>
+        <Appbar.Content title="LOCATION"  />
+        <Appbar.Action icon="dots-vertical" />
+      </Appbar.Header>
       <Content
         padder
         style={{ backgroundColor: "white" }}
