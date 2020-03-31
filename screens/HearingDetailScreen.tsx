@@ -48,7 +48,7 @@ export default function HearingDetailScreen({ navigation, route }) {
   // Retreive the hearing details from the passed parameters
   const court_file_number: string = route.params?.courtFileNumber;
   // This query will set the hearings to viewed once they have been viewed
-  const {} = useQuery<SetViewed>(SET_VIEWED, {
+  const [setViewed, {data: setViewed_data, loading: setViewed_loading}] = useMutation<SetViewed>(SET_VIEWED, {
     variables: {
       courtFileNumber: court_file_number
     }
@@ -99,6 +99,10 @@ export default function HearingDetailScreen({ navigation, route }) {
     },
     onCompleted: status => {
       setBookmarked(status?.isSubscribedTo);
+      if (status?.isSubscribedTo) {
+        subscribe();
+        setViewed();
+      }
     },
     fetchPolicy: "no-cache"
   });
@@ -215,6 +219,7 @@ export default function HearingDetailScreen({ navigation, route }) {
     if (!subscription_status && !subscription_status_loading) {
       getSubscriptionStatus();
     }
+
   });
 
   return (

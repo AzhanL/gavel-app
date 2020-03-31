@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }) {
     first: GetUnread_getUnread,
     second: GetUnread_getUnread
   ): number => {
-    return second.unreadCount - first.unreadCount;
+    return second.itemCount - first.itemCount;
   };
 
   // Query All Subscriptions and Unread status every 1 sec
@@ -94,11 +94,11 @@ export default function HomeScreen({ navigation }) {
               title={subscription.courtFileNumber}
               // Set the description to "n new hearings"
               description={
-                subscription.unreadCount > 0
-                  ? subscription.unreadCount.toString() +
+                subscription.itemCount > 0
+                  ? subscription.itemCount.toString() +
                     " new " +
                     // Plural/Singular
-                    (subscription.unreadCount >= 1 ? "hearings" : "hearing")
+                    (subscription.itemCount >= 1 ? "hearings" : "hearing")
                   : ""
               }
               left={props => <List.Icon {...props} icon="folder-account" />}
@@ -114,7 +114,7 @@ export default function HomeScreen({ navigation }) {
               }}
               // Bold the title if there are any unread hearings
               titleStyle={
-                subscription.unreadCount > 0
+                subscription.itemCount > 0
                   ? {
                       fontWeight: "bold"
                     }
@@ -134,6 +134,23 @@ export default function HomeScreen({ navigation }) {
         }}
       >
         RESET ALL VIEWS
+      </Button>
+      <Button
+      
+      onPress={() => {
+        database.transaction(tx => {
+          tx.executeSql(`
+          DELETE FROM subscriptions WHERE hearing_id = (SELECT hearing_id FROM subscriptions WHERE file_number="CR18-15-00784" LIMIT 1 )
+          `, undefined, (_, result) => {
+            console.log("Successfully deleted some hearings");
+          }, (_, error) => {
+            console.log("Error Deleting some hearings");
+            console.log(error);
+            return false;
+          });
+        });
+      }}>
+        DELETE SOME Hearings
       </Button>
     </Container>
   );

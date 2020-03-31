@@ -50,6 +50,15 @@ FROM
 GROUP BY
   file_number
 `;
+export const COUNT_HEARINGS = `
+SELECT 
+  file_number,
+  COUNT(hearing_id) as hearings_count
+FROM 
+  subscriptions
+GROUP BY
+  file_number
+`;
 export const SET_UNREAD_FILENUMBER = `
 UPDATE
   subscriptions
