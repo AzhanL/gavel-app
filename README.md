@@ -2,6 +2,8 @@
 
 > A native application built with React Native
 
+# Package manager (Yarn)
+- Refer to this website for the instructions on how to install yarn package manager: https://classic.yarnpkg.com/en/docs/install/#windows-stable
 
 # Info
 - expo tabs template has been used as starting point
