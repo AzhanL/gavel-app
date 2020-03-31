@@ -164,6 +164,7 @@ export default function HearingsScreen({ navigation }) {
                     onPress={() => {
                       removeSearchBar();
                     }}
+                    left={props => <List.Icon {...props} icon="file-tree" />}
                   >
                     {sortedDataByCategory[category].map(
                       (
@@ -182,11 +183,15 @@ export default function HearingsScreen({ navigation }) {
                             navigation.navigate("Modals", {
                               screen: "HearingDetail",
                               params: {
-                                courtFileNumber: hearing_details.courtFileNumber,
+                                courtFileNumber:
+                                  hearing_details.courtFileNumber,
                                 hearingID: hearing_details.id
                               }
                             });
                           }}
+                          left={props => (
+                            <List.Icon {...props} icon="folder-account" />
+                          )}
                         />
                       )
                     )}
@@ -202,7 +207,10 @@ export default function HearingsScreen({ navigation }) {
             // Output the progress bar only when the search is loading
             <View style={{}}>
               {loading || loadingSearch ? (
-                <ProgressBar color={Colors.blue700} indeterminate={loadingSearch || loading} />
+                <ProgressBar
+                  color={Colors.blue700}
+                  indeterminate={loadingSearch || loading}
+                />
               ) : (
                 <View style={{ flex: 1, alignItems: "center" }}>
                   <Text>Try Searching</Text>

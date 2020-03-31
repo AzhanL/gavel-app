@@ -118,7 +118,7 @@ export default function CourtDetailScreen({ route, navigation }) {
                 {/* Phone Number*/}
                 {court_location["phoneNumber"] ? (
                   <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Avatar.Icon size={24} icon="phone" />
+                    <Avatar.Icon size={21} icon="phone" />
                     <Paragraph
                       style={{ flex: 1 }}
                       onPress={() => {
@@ -134,7 +134,7 @@ export default function CourtDetailScreen({ route, navigation }) {
                 {/* Phone Number*/}
                 {court_location["faxNumber"] ? (
                   <View style={{ flex: 1, flexDirection: "row" }}>
-                    <Avatar.Icon size={24} icon="fax" />
+                    <Avatar.Icon size={21} icon="fax" />
                     <Paragraph>{" " + court_location["faxNumber"]}</Paragraph>
                   </View>
                 ) : (

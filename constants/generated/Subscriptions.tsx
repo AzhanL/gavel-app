@@ -11,7 +11,7 @@ export interface Subscriptions_subscriptions {
   __typename: "ClientDBHearingType";
   id: string;
   courtFileNumber: string;
-  viewed: boolean;
+  unread: boolean;
 }
 
 export interface Subscriptions {
