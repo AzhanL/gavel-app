@@ -4,7 +4,7 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: SetViewed
+// GraphQL mutation operation: SetViewed
 // ====================================================
 
 export interface SetViewed {
@@ -12,5 +12,5 @@ export interface SetViewed {
 }
 
 export interface SetViewedVariables {
-  courtFileNumber?: string | null;
+  courtFileNumber: string;
 }

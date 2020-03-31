@@ -5,7 +5,8 @@ import {
   SUBSCRIPTIONS_BY_FILENUMBER,
   ADD_HEARING,
   GET_UNREAD,
-  SET_READ_FILENUMBER
+  SET_READ_FILENUMBER,
+  COUNT_HEARINGS
 } from "./database";
 import {
   Subscriptions_subscriptions,
@@ -15,6 +16,7 @@ import {
   GetUnread,
   GetUnread_getUnread
 } from "../constants/generated/GetUnread";
+import { GetHearingCount_getHearingCount } from "./generated/GetHearingCount";
 
 export const resolvers = {
   Mutation: {
@@ -95,6 +97,34 @@ export const resolvers = {
       // if successfull then return true else retrun false
       await QueryDB();
       return return_val;
+    },
+    setViewed: async (_root, variables, { cache }, _info) => {
+      let return_value = true;
+      async function QueryDB() {
+        return new Promise((resolve, reject) => {
+          database.transaction(tx => {
+            // Execute sql in transaction
+            tx.executeSql(
+              SET_READ_FILENUMBER,
+              [variables.courtFileNumber],
+              (_, result) => {
+                resolve(true);
+              },
+              // On an error, reject the promise
+              (_, error) => {
+                return_value = false;
+                console.log(error);
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      }
+
+      // Return the all the subscriptions
+      await QueryDB();
+      return return_value;
     }
   },
   Query: {
@@ -197,9 +227,9 @@ export const resolvers = {
                 result.rows["_array"].forEach(row => {
                   // For each row in the database, append a object with the data
                   let subscription: GetUnread_getUnread = {
-                    __typename: "UnreadCountType",
+                    __typename: "CountType",
                     courtFileNumber: row["file_number"],
-                    unreadCount: row["unread_count"]
+                    itemCount: row["unread_count"]
                   };
                   // Append it to the return values
                   return_value.push(subscription);
@@ -221,31 +251,41 @@ export const resolvers = {
       await QueryDB();
       return return_value;
     },
-    setViewed: async (_root, variables, { cache }, _info) => {
-      let return_value = true;
+    getHearingCount: async (_root, variables, { cache }, _info) => {
+      let return_value = [];
       async function QueryDB() {
         return new Promise((resolve, reject) => {
+          
           database.transaction(tx => {
             // Execute sql in transaction
             tx.executeSql(
-              SET_READ_FILENUMBER,
-              [variables.courtFileNumber],
+              COUNT_HEARINGS,
+              undefined,
               (_, result) => {
-                resolve(true);
+                result.rows["_array"].forEach(row => {
+                  // For each row in the database, append a object with the data
+                  let subscription: GetHearingCount_getHearingCount = {
+                    __typename: "CountType",
+                    courtFileNumber: row["file_number"],
+                    itemCount: row["hearings_count"]
+                  };
+                  // Append it to the return values
+                  return_value.push(subscription);
+                });
+                resolve(return_value);
               },
               // On an error, reject the promise
               (_, error) => {
-                return_value = false;
                 console.log(error);
                 reject(error);
                 return false;
               }
             );
+          }, (error) => {
+            console.log(error);
           });
         });
       }
-
-      // Return the all the subscriptions
       await QueryDB();
       return return_value;
     }

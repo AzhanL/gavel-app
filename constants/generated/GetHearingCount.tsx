@@ -4,15 +4,15 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: GetUnread
+// GraphQL query operation: GetHearingCount
 // ====================================================
 
-export interface GetUnread_getUnread {
+export interface GetHearingCount_getHearingCount {
   __typename: "CountType";
   courtFileNumber: string;
   itemCount: number;
 }
 
-export interface GetUnread {
-  getUnread: (GetUnread_getUnread | null)[] | null;
+export interface GetHearingCount {
+  getHearingCount: (GetHearingCount_getHearingCount | null)[] | null;
 }

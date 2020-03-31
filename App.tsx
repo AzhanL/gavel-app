@@ -3,7 +3,7 @@ import gavelapptheme from "./native-base-theme/variables/gavelapp.js";
 import getTheme from "./native-base-theme/components";
 import MainMenuNavigator from "./navigation/BottomNavigator";
 import ModalNavigator from "./navigation/ModalNavigator";
-import React from "react";
+import React, { useEffect } from "react";
 import useLinking from "./navigation/useLinking";
 import { ApolloClient, ApolloClientOptions } from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-common";
@@ -21,6 +21,7 @@ import { resolvers as client_resolvers } from "./constants/resolvers";
 import { SplashScreen } from "expo";
 import { StyleProvider } from "native-base";
 import { StyleSheet, Text } from "react-native";
+import "./components/HearingNotification"
 
 const RootStack = createStackNavigator();
 
@@ -41,7 +42,7 @@ const _ApolloClientOptions: ApolloClientOptions<NormalizedCacheObject> = {
   typeDefs: CLIENT_TYPEDEFS
 };
 // Create the apollo client
-const _ApolloClient = new ApolloClient(_ApolloClientOptions);
+export const _ApolloClient = new ApolloClient(_ApolloClientOptions);
 
 // Entry App
 export default function App(props) {
@@ -52,7 +53,7 @@ export default function App(props) {
   const containerRef = React.useRef();
   const { getInitialState } = useLinking(containerRef);
   // Load any resources or data that we need prior to rendering the app
-  React.useEffect(() => {
+  useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
         SplashScreen.preventAutoHide();

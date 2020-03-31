@@ -7,19 +7,20 @@ export const CLIENT_TYPEDEFS = gql`
     courtFileNumber: String!
     unread: Boolean!
   }
-  type UnreadCountType {
+  type CountType {
     courtFileNumber: String!
-    unreadCount: Int!
+    itemCount: Int!
   }
   extend type Mutation {
     addHearing(hearings: [ClientDBHearingType!]!): Boolean!
     unsubscribeHearing(courtFileNumber: String!): Boolean!
+    setViewed(courtFileNumber: String!): Boolean!
   }
   extend type Query {
     subscriptions(courtFileNumber: String): [ClientDBHearingType]
     isSubscribedTo(courtFileNumber: String!): Boolean!
-    getUnread: [UnreadCountType]
-    setViewed(courtFileNumber: String!): Boolean!
+    getUnread: [CountType]
+    getHearingCount: [CountType]
   }
 `;
 
@@ -46,15 +47,23 @@ export const GET_UNREAD = gql`
   query GetUnread {
     getUnread @client {
       courtFileNumber
-      unreadCount
+      itemCount
+    }
+  }
+`;
+export const GET_HEARING_COUNT = gql`
+  query GetHearingCount {
+    getHearingCount @client {
+      courtFileNumber
+      itemCount
     }
   }
 `;
 export const SET_VIEWED = gql`
-  query SetViewed($courtFileNumber: String!) {
+  mutation SetViewed($courtFileNumber: String!) {
     setViewed(courtFileNumber: $courtFileNumber) @client
   }
-`
+`;
 export const IS_SUBSCRIBED_TO = gql`
   query IsSubscribedTo($courtFileNumber: String!) {
     isSubscribedTo(courtFileNumber: $courtFileNumber) @client
@@ -159,6 +168,15 @@ export const SEARCH_HEARINGS_BY_FILENUMBER = gql`
         name
         id
       }
+    }
+  }
+`;
+
+export const SEARCH_HEARINGS_BY_FILENUMBER_NOTIFICATION = gql`
+  query SearchHearingsByCourtFileNumberForNotification($courtFileNumber: String) {
+    hearings(fileNumber: $courtFileNumber) {
+      id
+      courtFileNumber
     }
   }
 `;
