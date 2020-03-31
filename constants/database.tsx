@@ -11,12 +11,12 @@ export const CREATE_TABLES = `
 CREATE TABLE IF NOT EXISTS subscriptions (
   hearing_id PRIMARY KEY,
   file_number VARCHAR(255) NOT NULL,
-  viewed BOOLEAN DEFAULT 0 NOT NULL
+  unread BOOLEAN DEFAULT 1 NOT NULL
 );
 `;
 export const ADD_HEARING = `
 INSERT INTO
-  subscriptions(hearing_id, file_number, viewed)
+  subscriptions(hearing_id, file_number, unread)
 VALUES
   (?, ?, ?);
 `;
@@ -40,21 +40,29 @@ FROM
 WHERE 
   file_number = ?;
 `;
-// Returns the the file_numbers with how many hearings have not been viewed
-export const UNREAD = `
+// Returns the the file_numbers with how many hearings have not been unread
+export const GET_UNREAD = `
 SELECT 
   file_number,
-  SUM(viewed)
+  SUM(unread) as unread_count
 FROM 
   subscriptions
 GROUP BY
   file_number
 `;
-export const SET_VIEWED_FILENUMBER = `
+export const SET_UNREAD_FILENUMBER = `
 UPDATE
   subscriptions
 SET
-  viewed = 1
+  unread = 1
+WHERE
+  file_number = ?;
+`;
+export const SET_READ_FILENUMBER = `
+UPDATE
+  subscriptions
+SET
+  unread = 0
 WHERE
   file_number = ?;
 `;

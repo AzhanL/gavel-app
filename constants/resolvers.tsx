@@ -3,12 +3,18 @@ import {
   UNSUBSCRIBE,
   SUBSCRIPTIONS,
   SUBSCRIPTIONS_BY_FILENUMBER,
-  ADD_HEARING
+  ADD_HEARING,
+  GET_UNREAD,
+  SET_READ_FILENUMBER
 } from "./database";
 import {
   Subscriptions_subscriptions,
   Subscriptions
 } from "../constants/generated/Subscriptions";
+import {
+  GetUnread,
+  GetUnread_getUnread
+} from "../constants/generated/GetUnread";
 
 export const resolvers = {
   Mutation: {
@@ -21,7 +27,6 @@ export const resolvers = {
           database.transaction(
             tx => {
               variables.hearings.forEach(hearing => {
-                console.log(hearing);
                 tx.executeSql(
                   // Use the subscribe query
                   ADD_HEARING,
@@ -29,7 +34,7 @@ export const resolvers = {
                   [
                     parseInt(hearing.id),
                     hearing.courtFileNumber,
-                    hearing.viewed ? 0 : 1
+                    hearing.unread ? 1 : 0
                   ],
                   // If successful return true
                   (_, result) => {},
@@ -119,7 +124,7 @@ export const resolvers = {
                     __typename: "ClientDBHearingType",
                     id: String(row["hearing_id"]),
                     courtFileNumber: row["file_number"],
-                    viewed: row["viewed"] == 0 ? false : true
+                    unread: row["unread"] == 0 ? false : true
                   });
                 });
                 resolve(result);
@@ -177,6 +182,71 @@ export const resolvers = {
           console.log(reason);
         });
 
+      return return_value;
+    },
+    getUnread: async (_root, variables, { cache }, _info) => {
+      let return_value = [];
+      async function QueryDB() {
+        return new Promise((resolve, reject) => {
+          database.transaction(tx => {
+            // Execute sql in transaction
+            tx.executeSql(
+              GET_UNREAD,
+              undefined,
+              (_, result) => {
+                result.rows["_array"].forEach(row => {
+                  // For each row in the database, append a object with the data
+                  let subscription: GetUnread_getUnread = {
+                    __typename: "UnreadCountType",
+                    courtFileNumber: row["file_number"],
+                    unreadCount: row["unread_count"]
+                  };
+                  // Append it to the return values
+                  return_value.push(subscription);
+                });
+                resolve(return_value);
+              },
+              // On an error, reject the promise
+              (_, error) => {
+                console.log(error);
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      }
+
+      // Return the all the subscriptions
+      await QueryDB();
+      return return_value;
+    },
+    setViewed: async (_root, variables, { cache }, _info) => {
+      let return_value = true;
+      async function QueryDB() {
+        return new Promise((resolve, reject) => {
+          database.transaction(tx => {
+            // Execute sql in transaction
+            tx.executeSql(
+              SET_READ_FILENUMBER,
+              [variables.courtFileNumber],
+              (_, result) => {
+                resolve(true);
+              },
+              // On an error, reject the promise
+              (_, error) => {
+                return_value = false;
+                console.log(error);
+                reject(error);
+                return false;
+              }
+            );
+          });
+        });
+      }
+
+      // Return the all the subscriptions
+      await QueryDB();
       return return_value;
     }
   }

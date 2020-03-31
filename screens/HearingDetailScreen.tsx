@@ -29,9 +29,11 @@ import {
   ADD_HEARING,
   UNSUBSCRIBE_HEARING,
   SEARCH_HEARINGS_BY_FILENUMBER,
-  IS_SUBSCRIBED_TO
+  IS_SUBSCRIBED_TO,
+  SET_VIEWED
 } from "../constants/graphql";
 import { View } from "react-native";
+import { SetViewed } from "../constants/generated/SetViewed";
 
 // TODO: Add a way to sync ID changes and location changes
 
@@ -45,6 +47,12 @@ export default function HearingDetailScreen({ navigation, route }) {
 
   // Retreive the hearing details from the passed parameters
   const court_file_number: string = route.params?.courtFileNumber;
+  // This query will set the hearings to viewed once they have been viewed
+  const {} = useQuery<SetViewed>(SET_VIEWED, {
+    variables: {
+      courtFileNumber: court_file_number
+    }
+  });
   // All hearings with the same file-number
   const [hearings, setHearings] = useState(null);
 
@@ -68,7 +76,7 @@ export default function HearingDetailScreen({ navigation, route }) {
           __typename: "ClientDBHearingType",
           id: hearing.id,
           courtFileNumber: hearing.courtFileNumber,
-          viewed: true
+          unread: false
         };
         // Push it to the list
         hearings_array.push(hearing_var);
@@ -261,7 +269,7 @@ export default function HearingDetailScreen({ navigation, route }) {
                 <Card.Title
                   title={fullname(hearing.partyName)}
                   subtitle={hearing.hearingType}
-                  left={props => <Avatar.Icon {...props} icon="gavel" />}
+                  left={props => <Avatar.Icon {...props} icon="ear-hearing" />}
                 />
                 <Card.Content>
                   <Title>{hearing.hearingType}</Title>
