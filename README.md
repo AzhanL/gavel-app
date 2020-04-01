@@ -26,6 +26,9 @@ yarn install
 4. Scan QR Code with expo app on Android or iOS
 
 # To Generate Types
+- Before generating types please installing apollo and apollo-codegen and following are the command:
+-- yarn global add apollo 
+-- yarn global add apollo-codegen 
 ```bash 
 apollo client:codegen \
   --excludes=node_modules/* \
