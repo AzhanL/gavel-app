@@ -9,6 +9,7 @@ import {
 } from "../constants/generated/GetUnread";
 import { GET_UNREAD } from "../constants/graphql";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
+import { database } from "../constants/database";
 
 export default function HomeScreen({ navigation }) {
   // 3 Dot menu - top right
@@ -79,6 +80,37 @@ export default function HomeScreen({ navigation }) {
               subscription_refetch();
             }}
             key={1}
+          />
+          <Menu.Item
+            title="Delete Some Bookmarks"
+            onPress={() => {
+              database.transaction(tx => {
+                tx.executeSql(
+                  `
+                DELETE FROM subscriptions WHERE hearing_id = (SELECT hearing_id FROM subscriptions WHERE 1=1 LIMIT 1 )
+                `,
+                  undefined,
+                  (_, result) => {
+                    console.log("Successfully deleted some hearings");
+                  },
+                  (_, error) => {
+                    console.log("Error Deleting some hearings");
+                    console.log(error);
+                    return false;
+                  }
+                );
+              });
+            }}
+            key={2}
+          />
+          <Menu.Item
+            title="Mark all as unread"
+            onPress={() => {
+              database.transaction(tx => {
+                tx.executeSql(`UPDATE subscriptions SET unread = 1 WHERE 1=1`);
+              });
+            }}
+            key={3}
           />
         </Menu>
       </Appbar.Header>

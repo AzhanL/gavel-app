@@ -51,7 +51,7 @@ export const resolvers = {
               });
             },
             error => {
-              console.log(error);
+              // console.log(error);
               reject(false);
             },
             () => {
