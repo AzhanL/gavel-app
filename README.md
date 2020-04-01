@@ -27,8 +27,8 @@ yarn install
 
 # To Generate Types
 - Before generating types please installing apollo and apollo-codegen and following are the command:
--- yarn global add apollo 
--- yarn global add apollo-codegen 
+1. yarn global add apollo 
+2. yarn global add apollo-codegen 
 ```bash 
 apollo client:codegen \
   --excludes=node_modules/* \
