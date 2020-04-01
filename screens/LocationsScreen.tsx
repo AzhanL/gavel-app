@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Body,
   Button,
@@ -10,13 +10,20 @@ import {
   Right,
   Spinner,
   Title
-  } from 'native-base';
+} from "native-base";
 
-import { GET_COURTS } from '../constants/graphql';
-import { GetCourts, GetCourts_courts } from '../constants/generated/GetCourts';
-import { List, Menu, ActivityIndicator, Colors, Appbar } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useQuery } from '@apollo/react-hooks';
+import { GET_COURTS } from "../constants/graphql";
+import { GetCourts, GetCourts_courts } from "../constants/generated/GetCourts";
+import {
+  List,
+  Menu,
+  ActivityIndicator,
+  Colors,
+  Appbar
+} from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useQuery } from "@apollo/react-hooks";
+import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 
 export default function LocationScreen({ navigation }) {
   const { loading, error, data, refetch } = useQuery<GetCourts>(GET_COURTS);
@@ -66,79 +73,80 @@ export default function LocationScreen({ navigation }) {
   return (
     <Container>
       {/* TODO: Change header from native-base to appbar from papertheme */}
-        {/* App bar  */}
-        <Appbar.Header style={{ height: 70 }}>
-        <Appbar.Action icon="map"/>
-        <Appbar.Content title="LOCATION"  />
+      {/* App bar  */}
+      <Appbar.Header style={{ height: 70 }}>
+        <Appbar.Action icon="map" />
+        <Appbar.Content title="Location" />
         <Appbar.Action icon="dots-vertical" />
       </Appbar.Header>
-      <Content
-        padder
-        style={{ backgroundColor: "white" }}
-        contentContainerStyle={{
-          justifyContent: "center",
-          alignContent: "center"
-        }}
-      >
-        {courtInfo ? (
-          <>
-            {/* Provincial General Courts */}
-            <List.Accordion
-              title={`Provincial Courts (${provincialCourts.length})`}
-            >
-              {provincialCourts.map(({ name }, i) => (
-                <List.Item
-                  title={name}
-                  key={i}
-                  left={props => <List.Icon {...props} icon="bank" />}
-                />
-              ))}
-            </List.Accordion>
 
-            {/* Provincial Superior Courts */}
-            <List.Accordion
-              title={`Superior Courts (${provincialSuperiorCourts.length})`}
-            >
-              {provincialSuperiorCourts.map((courtInfo, i) => (
-                <List.Item
-                  title={courtInfo["name"]}
-                  key={i}
-                  left={props => <List.Icon {...props} icon="bank" />}
-                  right={props => <List.Icon {...props} icon="arrow-right" />}
-                  onPress={() =>
-                    navigation.navigate("Modals", {
-                      screen: "CourtDetail",
-                      params: { courtInfo: courtInfo, name: courtInfo["name"] }
-                    })
-                  }
-                />
-              ))}
-            </List.Accordion>
+      {/* Main content with locations */}
+      {courtInfo && (
+        <Content
+          padder
+          style={{ backgroundColor: "white" }}
+          contentContainerStyle={{
+            justifyContent: "center",
+            alignContent: "center"
+          }}
+        >
+          {/* Provincial General Courts */}
+          <List.Accordion
+            title={`Provincial Courts (${provincialCourts.length})`}
+          >
+            {provincialCourts.map(({ name }, i) => (
+              <List.Item
+                title={name}
+                key={i}
+                left={props => <List.Icon {...props} icon="bank" />}
+              />
+            ))}
+          </List.Accordion>
 
-            {/* Provincial Appeal Courts */}
-            <List.Accordion
-              title={`Superior Courts (${provincialAppealCourts.length})`}
-            >
-              {provincialAppealCourts.map((courtInfo, i) => (
-                <List.Item
-                  title={courtInfo["name"]}
-                  key={i}
-                  left={props => <List.Icon {...props} icon="bank" />}
-                  right={props => <List.Icon {...props} icon="arrow-right" />}
-                  onPress={() =>
-                    navigation.navigate("Modals", {
-                      screen: "CourtDetail",
-                      params: { courtInfo: courtInfo, name: courtInfo["name"] }
-                    })
-                  }
-                />
-              ))}
-            </List.Accordion>
-          </>
-        ) : (
-          <ActivityIndicator animating={true} color={Colors.grey700} />
-        )}
-      </Content>
+          {/* Provincial Superior Courts */}
+          <List.Accordion
+            title={`Superior Courts (${provincialSuperiorCourts.length})`}
+          >
+            {provincialSuperiorCourts.map((courtInfo, i) => (
+              <List.Item
+                title={courtInfo["name"]}
+                key={i}
+                left={props => <List.Icon {...props} icon="bank" />}
+                right={props => <List.Icon {...props} icon="arrow-right" />}
+                onPress={() =>
+                  navigation.navigate("Modals", {
+                    screen: "CourtDetail",
+                    params: { courtInfo: courtInfo, name: courtInfo["name"] }
+                  })
+                }
+              />
+            ))}
+          </List.Accordion>
+
+          {/* Provincial Appeal Courts */}
+          <List.Accordion
+            title={`Superior Courts (${provincialAppealCourts.length})`}
+          >
+            {provincialAppealCourts.map((courtInfo, i) => (
+              <List.Item
+                title={courtInfo["name"]}
+                key={i}
+                left={props => <List.Icon {...props} icon="bank" />}
+                right={props => <List.Icon {...props} icon="arrow-right" />}
+                onPress={() =>
+                  navigation.navigate("Modals", {
+                    screen: "CourtDetail",
+                    params: { courtInfo: courtInfo, name: courtInfo["name"] }
+                  })
+                }
+              />
+            ))}
+          </List.Accordion>
+        </Content>
+      )}
+
+      {/* Loading Bar  */}
+      {(loading || !courtInfo) && <MiddleLoadingBar />}
     </Container>
   );
 }

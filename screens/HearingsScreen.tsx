@@ -10,12 +10,13 @@ import {
   Dialog,
   Button,
   RadioButton,
-  Text
+  Paragraph
 } from "react-native-paper";
 import { Content, View, Container } from "native-base";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_HEARINGS_BY_PARTYNAME } from "../constants/graphql";
 import { SearchHearingsByPartyName_hearings } from "../constants/generated/SearchHearingsByPartyName";
+import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 export default function HearingsScreen({ navigation }) {
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
@@ -87,8 +88,8 @@ export default function HearingsScreen({ navigation }) {
       {!searching ? (
         // Regular Default Header
         <Appbar.Header style={{ height: 70 }}>
-          <Appbar.Action icon="gavel"/>
-          <Appbar.Content title={"HEARINGS"} subtitle={""} />
+          <Appbar.Action icon="gavel" />
+          <Appbar.Content title="Hearing" />
 
           <Appbar.Action
             icon="magnify"
@@ -151,164 +152,165 @@ export default function HearingsScreen({ navigation }) {
         </Appbar.Header>
       )}
 
-      {/* Hearing Categories and List */}
-      <Content padder contentContainerStyle={{}}>
-        <View>
-          {sortedDataByCategory && sortedDataReady ? (
-            <View>
-              {Object.keys(sortedDataByCategory).length > 0 ? (
-                Object.keys(sortedDataByCategory).map((category, i) => (
-                  <List.Accordion
-                    title={category}
-                    key={i}
-                    onPress={() => {
-                      removeSearchBar();
-                    }}
-                    left={props => <List.Icon {...props} icon="file-tree" />}
-                  >
-                    {sortedDataByCategory[category].map(
-                      (
-                        hearing_details: SearchHearingsByPartyName_hearings,
-                        j
-                      ) => (
-                        // Output title
-                        <List.Item
-                          title={hearing_details[outputSettingValue]}
-                          key={j + 10000}
-                          right={props => (
-                            <List.Icon {...props} icon="arrow-right" />
-                          )}
-                          style={{ backgroundColor: Colors.grey300 }}
-                          onPress={() => {
-                            navigation.navigate("Modals", {
-                              screen: "HearingDetail",
-                              params: {
-                                courtFileNumber:
-                                  hearing_details.courtFileNumber,
-                                hearingID: hearing_details.id
-                              }
-                            });
-                          }}
-                          left={props => (
-                            <List.Icon {...props} icon="folder-account" />
-                          )}
-                        />
-                      )
-                    )}
-                  </List.Accordion>
-                ))
-              ) : (
-                <View style={{ flex: 1, alignItems: "center" }}>
-                  <Text style={{marginTop:200, fontWeight:'bold'}}>No results</Text>
-                </View>
-              )}
-            </View>
-          ) : (
-            // Output the progress bar only when the search is loading
-            <View style={{}}>
-              {loading || loadingSearch ? (
-                <ProgressBar
-                  color={Colors.blue700}
-                  indeterminate={loadingSearch || loading}
-                />
-              ) : (
-                <View style={{ flex: 1, alignItems: "center" }}>
-                  <Text style={{marginTop:200, fontWeight:'bold'}}>Try Searching</Text>
-                </View>
-              )}
-            </View>
-          )}
+      {/* Helper Text */}
+      {!loading && !loadingSearch && !sortedDataReady && (
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Paragraph>Try Searching</Paragraph>
+          <List.Icon icon="magnify" />
         </View>
+      )}
 
-        {/* Search Setting Dialong */}
-        {searchSettingDialog ? (
-          <Portal>
-            <Dialog
-              visible={searchSettingDialog}
-              onDismiss={() => {
-                () => {
+      {/* Loading Searching */}
+      {(loading || loadingSearch) && (
+        <MiddleLoadingBar />
+      )}
+
+      {/* Hearing Categories and List */}
+      {sortedDataByCategory &&
+        sortedDataReady &&
+        Object.keys(sortedDataByCategory).length > 0 && (
+          <Content padder>
+            {Object.keys(sortedDataByCategory).map((category, i) => (
+              <List.Accordion
+                title={category}
+                key={i}
+                onPress={() => {
+                  removeSearchBar();
+                }}
+                left={props => <List.Icon {...props} icon="file-tree" />}
+              >
+                {sortedDataByCategory[category].map(
+                  (hearing_details: SearchHearingsByPartyName_hearings, j) => (
+                    // Output title
+                    <List.Item
+                      title={hearing_details[outputSettingValue]}
+                      key={j + 10000}
+                      right={props => (
+                        <List.Icon {...props} icon="arrow-right" />
+                      )}
+                      style={{ backgroundColor: Colors.grey300 }}
+                      onPress={() => {
+                        navigation.navigate("Modals", {
+                          screen: "HearingDetail",
+                          params: {
+                            courtFileNumber: hearing_details.courtFileNumber,
+                            hearingID: hearing_details.id
+                          }
+                        });
+                      }}
+                      left={props => (
+                        <List.Icon {...props} icon="folder-account" />
+                      )}
+                    />
+                  )
+                )}
+              </List.Accordion>
+            ))}
+          </Content>
+        )}
+
+      {/* No search result */}
+      {sortedDataByCategory &&
+        sortedDataReady &&
+        Object.keys(sortedDataByCategory).length <= 0 && (
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <Paragraph>No search results</Paragraph>
+            <List.Icon icon="magnify" />
+          </View>
+        )}
+
+      {/* Search Setting Dialong */}
+      {searchSettingDialog ? (
+        <Portal>
+          <Dialog
+            visible={searchSettingDialog}
+            onDismiss={() => {
+              () => {
+                setSearchSettingDialog(false);
+              };
+            }}
+          >
+            <Dialog.Title>Select a Search Type</Dialog.Title>
+            <Dialog.Content>
+              <RadioButton.Group
+                onValueChange={value => {
+                  setSearchSettingValue(value);
+                }}
+                value={searchSettingValue}
+              >
+                {/* Disabled as titles are not alway present
+                  <RadioButton.Item label="Title" value="title">
+                   */}
+                <RadioButton.Item
+                  label="Court File Number"
+                  value="courtFileNumber"
+                />
+                <RadioButton.Item label="Party Name" value="partyName" />
+              </RadioButton.Group>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button
+                onPress={() => {
                   setSearchSettingDialog(false);
-                };
-              }}
-            >
-              <Dialog.Title>Select a Search Type</Dialog.Title>
-              <Dialog.Content>
-                <RadioButton.Group
-                  onValueChange={value => {
-                    setSearchSettingValue(value);
-                  }}
-                  value={searchSettingValue}
-                >
-                  {/* Disabled as titles are not alway present
-                  <RadioButton.Item label="Title" value="title">
-                   */}
-                  <RadioButton.Item
-                    label="Court File Number"
-                    value="courtFileNumber"
-                  />
-                  <RadioButton.Item label="Party Name" value="partyName" />
-                </RadioButton.Group>
-              </Dialog.Content>
-              <Dialog.Actions>
-                <Button
-                  onPress={() => {
-                    setSearchSettingDialog(false);
-                  }}
-                >
-                  Done
-                </Button>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
-        ) : (
-          <></>
-        )}
+                }}
+              >
+                Done
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      ) : (
+        <></>
+      )}
 
-        {/* Output Setting Dialong */}
-        {outputSettingDialog ? (
-          <Portal>
-            <Dialog
-              visible={outputSettingDialog}
-              onDismiss={() => {
-                () => {
-                  setOutputSettingDialog(false);
-                };
-              }}
-            >
-              {/* Change the output view setting */}
-              <Dialog.Title>Select an Output View</Dialog.Title>
-              <Dialog.Content>
-                <RadioButton.Group
-                  onValueChange={value => {
-                    setOutputSettingValue(value);
-                  }}
-                  value={outputSettingValue}
-                >
-                  {/* Disabled as titles are not alway present
+      {/* Output Setting Dialong */}
+      {outputSettingDialog ? (
+        <Portal>
+          <Dialog
+            visible={outputSettingDialog}
+            onDismiss={() => {
+              () => {
+                setOutputSettingDialog(false);
+              };
+            }}
+          >
+            {/* Change the output view setting */}
+            <Dialog.Title>Select an Output View</Dialog.Title>
+            <Dialog.Content>
+              <RadioButton.Group
+                onValueChange={value => {
+                  setOutputSettingValue(value);
+                }}
+                value={outputSettingValue}
+              >
+                {/* Disabled as titles are not alway present
                   <RadioButton.Item label="Title" value="title">
                    */}
-                  <RadioButton.Item
-                    label="Court File Number"
-                    value="courtFileNumber"
-                  />
-                  <RadioButton.Item label="Party Name" value="partyName" />
-                </RadioButton.Group>
-              </Dialog.Content>
-              <Dialog.Actions>
-                <Button
-                  onPress={() => {
-                    setOutputSettingDialog(false);
-                  }}
-                >
-                  Done
-                </Button>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
-        ) : (
-          <></>
-        )}
-      </Content>
+                <RadioButton.Item
+                  label="Court File Number"
+                  value="courtFileNumber"
+                />
+                <RadioButton.Item label="Party Name" value="partyName" />
+              </RadioButton.Group>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button
+                onPress={() => {
+                  setOutputSettingDialog(false);
+                }}
+              >
+                Done
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      ) : (
+        <></>
+      )}
     </Container>
   );
 }
