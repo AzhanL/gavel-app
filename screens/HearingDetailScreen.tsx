@@ -155,7 +155,13 @@ export default function HearingDetailScreen({ navigation, route }) {
   // Returns a fullname in format "FirstName LastName" from "LastName, FirstName"
   const fullname = (comma_seperated_name: string) => {
     let split_name = comma_seperated_name.split(",");
-    return `${split_name[1]} ${split_name[0]}`.trim();
+    let full_name = "";
+    split_name.forEach(namePart => {
+      full_name += split_name + " ";
+    });
+    if (full_name.trim() === "") {
+      return "Not Avaialble";
+    } else return full_name.trim();
   };
 
   // Returns the timezone from offset like "+0500" in format "+HHMM"
@@ -241,9 +247,7 @@ export default function HearingDetailScreen({ navigation, route }) {
       {!loading_hearings &&
         (subscription_status_loading ||
           subscribe_loading ||
-          unsubscribe_loading) && (
-          <TopLoadingBar />
-        )}
+          unsubscribe_loading) && <TopLoadingBar />}
 
       {/* Content  - Display all the hearings that have taken place*/}
       {all_hearings ? (
@@ -304,7 +308,7 @@ export default function HearingDetailScreen({ navigation, route }) {
         <></>
       )}
       {/* Main Loading Bar*/}
-      {loading_hearings && MiddleLoadingBar}
+      {loading_hearings && <MiddleLoadingBar />}
 
       {/* Snackbar for messages */}
       {snackbarVisibility && (
