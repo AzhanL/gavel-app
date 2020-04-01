@@ -16,8 +16,7 @@ import { Container, Content } from "native-base";
 import { SearchHearingsByCourtFileNumber } from "../constants/generated/SearchHearingsByCourtFileNumber";
 import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
 import { IsSubscribedTo } from "../constants/generated/IsSubscribedTo";
-import {
-  AddHearings} from "../constants/generated/AddHearings";
+import { AddHearings } from "../constants/generated/AddHearings";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/react-hooks";
 import {
   ADD_HEARING,
@@ -28,6 +27,8 @@ import {
 } from "../constants/graphql";
 import { View } from "react-native";
 import { SetViewed } from "../constants/generated/SetViewed";
+import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
+import { TopLoadingBar } from "../components/TopLoadingBar";
 
 // TODO: Add a way to sync ID changes and location changes
 
@@ -35,7 +36,6 @@ export default function HearingDetailScreen({ navigation, route }) {
   // Manage bookmark states
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkData, setBookmarkData] = useState(null);
-
 
   // Retreive the hearing details from the passed parameters
   const court_file_number: string = route.params?.courtFileNumber;
@@ -80,9 +80,7 @@ export default function HearingDetailScreen({ navigation, route }) {
   // Database checker to check if the file number is subscribed
   const [
     getSubscriptionStatus,
-    {
-      data: subscription_status,
-      loading: subscription_status_loading    }
+    { data: subscription_status, loading: subscription_status_loading }
   ] = useLazyQuery<IsSubscribedTo>(IS_SUBSCRIBED_TO, {
     variables: {
       courtFileNumber: court_file_number
@@ -98,19 +96,17 @@ export default function HearingDetailScreen({ navigation, route }) {
   });
 
   // Create functions for subscribte and unsubscribe
-  const [
-    subscribe,
-    { loading: subscribe_loading }
-  ] = useMutation<AddHearings>(ADD_HEARING, {
-    variables: {
-      hearings: bookmarkData
-    }
-  });
-  const [
-    unsubscribe,
+  const [subscribe, { loading: subscribe_loading }] = useMutation<AddHearings>(
+    ADD_HEARING,
     {
-      loading: unsubscribe_loading    }
-  ] = useMutation(UNSUBSCRIBE_HEARING);
+      variables: {
+        hearings: bookmarkData
+      }
+    }
+  );
+  const [unsubscribe, { loading: unsubscribe_loading }] = useMutation(
+    UNSUBSCRIBE_HEARING
+  );
 
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
@@ -206,7 +202,6 @@ export default function HearingDetailScreen({ navigation, route }) {
     if (!subscription_status && !subscription_status_loading) {
       getSubscriptionStatus();
     }
-
   });
 
   return (
@@ -241,18 +236,15 @@ export default function HearingDetailScreen({ navigation, route }) {
           <Menu.Item title="Placeholder" onPress={() => {}} key={1} />
         </Menu>
       </Appbar.Header>
-      
-      {/* Extra loading */}
+
+      {/* Background loading */}
       {!loading_hearings &&
-      (subscription_status_loading ||
-        subscribe_loading ||
-        unsubscribe_loading) ? (
-        <View>
-          <ProgressBar indeterminate={true} color="#20272F" />
-        </View>
-      ) : (
-        <></>
-      )}
+        (subscription_status_loading ||
+          subscribe_loading ||
+          unsubscribe_loading) && (
+          <TopLoadingBar />
+        )}
+
       {/* Content  - Display all the hearings that have taken place*/}
       {all_hearings ? (
         <Content padder>
@@ -283,7 +275,7 @@ export default function HearingDetailScreen({ navigation, route }) {
                       )}:${hearing.dateTimeOffset.trim().substring(3, 5)}`}
                   </Paragraph>
                 </Card.Content>
-                <Card.Actions style={{justifyContent: "space-between"}}>
+                <Card.Actions style={{ justifyContent: "space-between" }}>
                   <Button onPress={() => {}}>Transcript</Button>
                   <Button
                     onPress={() =>
@@ -311,18 +303,11 @@ export default function HearingDetailScreen({ navigation, route }) {
       ) : (
         <></>
       )}
-      {/* Loading */}
-      {loading_hearings ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator animating={true} color="#20272F" size="large" />
-        </View>
-      ) : (
-        <></>
-      )}
+      {/* Main Loading Bar*/}
+      {loading_hearings && MiddleLoadingBar}
+
       {/* Snackbar for messages */}
-      {snackbarVisibility ? (
+      {snackbarVisibility && (
         <Snackbar
           visible={snackbarVisibility}
           onDismiss={() => setSnackbarVisibility(false)}
@@ -338,8 +323,6 @@ export default function HearingDetailScreen({ navigation, route }) {
         >
           {snackbarMessage}
         </Snackbar>
-      ) : (
-        <></>
       )}
     </Container>
   );
