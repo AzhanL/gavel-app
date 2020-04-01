@@ -164,9 +164,30 @@ export const SEARCH_HEARINGS_BY_FILENUMBER = gql`
       room {
         id
       }
-      court {
-        name
+      court{
         id
+        name
+        courtBranch
+        courtType
+        courtSpecialization
+        locations {
+          id
+          name
+          addressLine1
+          addressLine2
+          postalCode
+          city
+          province
+          phoneNumber
+          faxNumber
+          operationalDays {
+            weekDay
+            timeSlots {
+              openTime
+              closeTime
+            }
+          }
+        }
       }
     }
   }
