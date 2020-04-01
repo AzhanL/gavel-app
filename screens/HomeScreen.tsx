@@ -9,7 +9,8 @@ import {
   Button,
   Badge,
   Colors,
-  Paragraph
+  Paragraph,
+  ProgressBar
 } from "react-native-paper";
 import { useLazyQuery, useQuery } from "@apollo/react-hooks";
 import {
@@ -19,6 +20,7 @@ import {
 import { GET_UNREAD, SET_VIEWED } from "../constants/graphql";
 import { database } from "../constants/database";
 import { SetViewed } from "../constants/generated/SetViewed";
+import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 
 export default function HomeScreen({ navigation }) {
   // Storage for the sorted subscriptions
@@ -68,17 +70,13 @@ export default function HomeScreen({ navigation }) {
       {/* App bar  */}
       <Appbar.Header style={{ height: 70 }}>
         <Appbar.Action icon="home" />
-        <Appbar.Content title="HOME" />
+        <Appbar.Content title="Home" />
         <Appbar.Action icon="dots-vertical" />
       </Appbar.Header>
 
       {/* Loading circle at start */}
       {subscriptions_loading && (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator animating={true} color="#20272F" size="large" />
-        </View>
+        <MiddleLoadingBar />
       )}
 
       {/* Display content when done loading*/}
