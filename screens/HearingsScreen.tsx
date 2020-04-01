@@ -16,6 +16,8 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_HEARINGS_BY_PARTYNAME } from "../constants/graphql";
 import { SearchHearingsByPartyName_hearings } from "../constants/generated/SearchHearingsByPartyName";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
+
+
 export default function HearingsScreen({ navigation }) {
   // 3 Dot menu - top right
   const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
