@@ -295,19 +295,21 @@ export default function HearingDetailScreen({ navigation, route }) {
                       )}:${hearing.dateTimeOffset.trim().substring(3, 5)}`}
                   </Paragraph>
                 </Card.Content>
-                <Card.Actions>
-                    <Button   
-                      onPress={() =>
+                <Card.Actions style={{justifyContent: "space-between"}}>
+                  <Button onPress={() => {}}>Transcript</Button>
+                  <Button
+                    onPress={() =>
                       navigation.navigate("Modals", {
-                      screen: "CourtDetail",
-                      params: { courtInfo: hearing.court, name: hearing.court.name }
-                      })}
-                      style={{backgroundColor:'lightgrey'}}
-                      
-                    > Court Information </Button>
-                </Card.Actions>
-                <Card.Actions>
-                  <Button>Transcript</Button>
+                        screen: "CourtDetail",
+                        params: {
+                          courtInfo: hearing.court,
+                          name: hearing.court.name
+                        }
+                      })
+                    }
+                  >
+                    Court Information
+                  </Button>
                 </Card.Actions>
               </Card>
               {i + 1 !== all_hearings.hearings.length ? (
