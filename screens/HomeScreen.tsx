@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View } from "react-native";
 import { Container, Content } from "native-base";
-import {
-  Appbar,
-  List,
-  Colors,
-  Paragraph} from "react-native-paper";
+import { Appbar, List, Colors, Paragraph, Menu } from "react-native-paper";
 import { useQuery } from "@apollo/react-hooks";
 import {
   GetUnread,
@@ -15,6 +11,9 @@ import { GET_UNREAD } from "../constants/graphql";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 
 export default function HomeScreen({ navigation }) {
+  // 3 Dot menu - top right
+  const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
+
   // Storage for the sorted subscriptions
   const [sortedSubscriptions, setSortedSubscriptions] = useState<
     GetUnread_getUnread[]
@@ -29,7 +28,9 @@ export default function HomeScreen({ navigation }) {
   // Query All Subscriptions and Unread status every 1 sec
   const {
     data: subscriptions,
-    loading: subscriptions_loading  } = useQuery<GetUnread>(GET_UNREAD, {
+    loading: subscriptions_loading,
+    refetch: subscription_refetch
+  } = useQuery<GetUnread>(GET_UNREAD, {
     onCompleted: data => {
       // Sort them according to the options set
       data.getUnread.sort((first, second) => sortSubscription(first, second));
@@ -61,13 +62,29 @@ export default function HomeScreen({ navigation }) {
       <Appbar.Header style={{ height: 70 }}>
         <Appbar.Action icon="home" />
         <Appbar.Content title="Home" />
-        <Appbar.Action icon="dots-vertical" />
+        <Menu
+          visible={moreMenuVisible}
+          onDismiss={() => setMoreMenuVisiblity(false)}
+          anchor={
+            <Appbar.Action
+              color="white"
+              icon="dots-vertical"
+              onPress={() => setMoreMenuVisiblity(true)}
+            />
+          }
+        >
+          <Menu.Item
+            title="Refresh Bookmarks"
+            onPress={() => {
+              subscription_refetch();
+            }}
+            key={1}
+          />
+        </Menu>
       </Appbar.Header>
 
       {/* Loading circle at start */}
-      {subscriptions_loading && (
-        <MiddleLoadingBar />
-      )}
+      {subscriptions_loading && <MiddleLoadingBar />}
 
       {/* Display content when done loading*/}
       {!subscriptions_loading && subscriptions.getUnread.length >= 1 && (
@@ -111,7 +128,7 @@ export default function HomeScreen({ navigation }) {
       )}
 
       {/* No bookmarks */}
-      {!subscriptions_loading && subscriptions.getUnread.length <= 0 &&  (
+      {!subscriptions_loading && subscriptions.getUnread.length <= 0 && (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
