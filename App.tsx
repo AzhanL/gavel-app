@@ -5,44 +5,20 @@ import MainMenuNavigator from "./navigation/BottomNavigator";
 import ModalNavigator from "./navigation/ModalNavigator";
 import React, { useEffect } from "react";
 import useLinking from "./navigation/useLinking";
-import { ApolloClient, ApolloClientOptions } from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-common";
-import { CLIENT_TYPEDEFS } from "./constants/graphql";
 import { CREATE_TABLES, database, DatabaseContext } from "./constants/database";
 import { createStackNavigator } from "@react-navigation/stack";
 import { GavelPaperTheme } from "./styles/PaperThemeConfig";
-import { HttpLink } from "apollo-link-http";
-import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { myconfig } from "./navigation/ModalNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider as PaperProvider } from "react-native-paper";
-import { resolvers as client_resolvers } from "./constants/resolvers";
 import { SplashScreen } from "expo";
 import { StyleProvider } from "native-base";
-import { StyleSheet, Text } from "react-native";
 import "./components/HearingNotification"
+import { _ApolloClient } from "./constants/apollo";
 
 const RootStack = createStackNavigator();
-
-// Create ApolloHttpLink object
-const _ApolloLink = new HttpLink({
-  uri: "http://gavelapi.ontariotechu.xyz:8000/graphql/"
-});
-// Create InMemoryCacheConfigs
-const _InMemoryCacheConfig = {};
-// Create InMemoryCache
-const _InMemoryCache = new InMemoryCache(_InMemoryCacheConfig);
-
-// Create apollo client options
-const _ApolloClientOptions: ApolloClientOptions<NormalizedCacheObject> = {
-  link: _ApolloLink,
-  cache: _InMemoryCache,
-  resolvers: client_resolvers,
-  typeDefs: CLIENT_TYPEDEFS
-};
-// Create the apollo client
-export const _ApolloClient = new ApolloClient(_ApolloClientOptions);
 
 // Entry App
 export default function App(props) {
@@ -129,15 +105,5 @@ export default function App(props) {
   }
 }
 
-function MainMenu() {
-  return <Text>Menu</Text>;
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
+

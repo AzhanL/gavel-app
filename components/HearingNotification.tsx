@@ -8,7 +8,7 @@ import {
   SEARCH_HEARINGS_BY_FILENUMBER,
   ADD_HEARING
 } from "../constants/graphql";
-import { _ApolloClient } from "../App";
+import { _ApolloClient } from "../constants/apollo";
 import {
   GetHearingCount
 } from "../constants/generated/GetHearingCount";
@@ -119,7 +119,7 @@ TaskManager.defineTask("HearingUpdateTask", () => {
 });
 BackgroundFetch.setMinimumIntervalAsync(1);
 BackgroundFetch.registerTaskAsync("HearingUpdateTask", {
-  minimumInterval: 0,
+  minimumInterval: 1,
   stopOnTerminate: false,
   startOnBoot: true
 });
