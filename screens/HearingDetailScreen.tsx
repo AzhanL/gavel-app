@@ -22,7 +22,6 @@ import {
   AddHearings,
   AddHearingsVariables
 } from "../constants/generated/AddHearings";
-import { Text } from "react-native-paper";
 import { DatabaseContext, UNSUBSCRIBE } from "../constants/database";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/react-hooks";
 import {
@@ -254,6 +253,7 @@ export default function HearingDetailScreen({ navigation, route }) {
           <Menu.Item title="Placeholder" onPress={() => {}} key={1} />
         </Menu>
       </Appbar.Header>
+      
       {/* Extra loading */}
       {!loading_hearings &&
       (subscription_status_loading ||
@@ -295,6 +295,17 @@ export default function HearingDetailScreen({ navigation, route }) {
                       )}:${hearing.dateTimeOffset.trim().substring(3, 5)}`}
                   </Paragraph>
                 </Card.Content>
+                <Card.Actions>
+                    <Button   
+                      onPress={() =>
+                      navigation.navigate("Modals", {
+                      screen: "CourtDetail",
+                      params: { courtInfo: hearing.court, name: hearing.court.name }
+                      })}
+                      style={{backgroundColor:'lightgrey'}}
+                      
+                    > Court Information </Button>
+                </Card.Actions>
                 <Card.Actions>
                   <Button>Transcript</Button>
                 </Card.Actions>
