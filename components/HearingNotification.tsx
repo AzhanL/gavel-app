@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from "react";
 
 import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
-import { useQuery } from "@apollo/react-hooks";
 import { Notifications } from "expo";
-import { GetUnread } from "../constants/generated/GetUnread";
 import {
-  GET_UNREAD,
   GET_HEARING_COUNT,
   SEARCH_HEARINGS_BY_FILENUMBER_NOTIFICATION,
   SEARCH_HEARINGS_BY_FILENUMBER,
@@ -14,16 +10,12 @@ import {
 } from "../constants/graphql";
 import { _ApolloClient } from "../App";
 import {
-  GetHearingCount_getHearingCount,
   GetHearingCount
 } from "../constants/generated/GetHearingCount";
 import { SearchHearingsByCourtFileNumberForNotification } from "../constants/generated/SearchHearingsByCourtFileNumberForNotification";
 import { SearchHearingsByCourtFileNumber } from "../constants/generated/SearchHearingsByCourtFileNumber";
 import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
 import { AddHearings } from "../constants/generated/AddHearings";
-export default function Notifier() {
-  return <></>;
-}
 
 const GenericHearingNotification = {
   title: "Example Title!",
@@ -35,7 +27,7 @@ const GenericHearingNotification = {
   }
 };
 
-TaskManager.defineTask("HearingUpdateTask", ({ data, error }) => {
+TaskManager.defineTask("HearingUpdateTask", () => {
   console.log("Checking for new hearings");
   // First get all the subscribed hearings
   // Query All Subscriptions and Unread status every 1 sec

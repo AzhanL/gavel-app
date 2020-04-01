@@ -3,7 +3,6 @@ import {
   Appbar,
   Searchbar,
   Colors,
-  ProgressBar,
   List,
   Menu,
   Portal,
