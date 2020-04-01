@@ -88,7 +88,6 @@ export default function HearingDetailScreen({ navigation, route }) {
     onCompleted: status => {
       setBookmarked(status?.isSubscribedTo);
       if (status?.isSubscribedTo) {
-        subscribe();
         setViewed();
       }
     },
