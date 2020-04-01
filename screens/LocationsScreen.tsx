@@ -7,13 +7,17 @@ import { GET_COURTS } from "../constants/graphql";
 import { GetCourts } from "../constants/generated/GetCourts";
 import {
   List,
-  Appbar
+  Appbar,
+  Menu
 } from "react-native-paper";
 import { useQuery } from "@apollo/react-hooks";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 
 export default function LocationScreen({ navigation }) {
-  const { loading, error, data } = useQuery<GetCourts>(GET_COURTS);
+  // 3 Dot menu - top right
+  const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
+
+  const { loading, error, data, refetch } = useQuery<GetCourts>(GET_COURTS);
   const [courtInfo, setCourtInfo] = useState(null);
   // 3 Dot menu - top right
   const [] = useState(false);
@@ -64,7 +68,25 @@ export default function LocationScreen({ navigation }) {
       <Appbar.Header style={{ height: 70 }}>
         <Appbar.Action icon="map" />
         <Appbar.Content title="Location" />
-        <Appbar.Action icon="dots-vertical" />
+        <Menu
+            visible={moreMenuVisible}
+            onDismiss={() => setMoreMenuVisiblity(false)}
+            anchor={
+              <Appbar.Action
+                color="white"
+                icon="dots-vertical"
+                onPress={() => setMoreMenuVisiblity(true)}
+              />
+            }
+          >
+            <Menu.Item
+              title="Update Locations"
+              onPress={() => {
+                refetch()
+              }}
+              key={1}
+            />
+          </Menu>
       </Appbar.Header>
 
       {/* Main content with locations */}
