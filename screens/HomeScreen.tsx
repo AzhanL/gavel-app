@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Container, Content } from "native-base";
 import {
   Appbar,
-  ActivityIndicator,
   List,
-  Card,
-  Button,
-  Badge,
   Colors,
-  Paragraph,
-  ProgressBar
-} from "react-native-paper";
-import { useLazyQuery, useQuery } from "@apollo/react-hooks";
+  Paragraph} from "react-native-paper";
+import { useQuery } from "@apollo/react-hooks";
 import {
   GetUnread,
   GetUnread_getUnread
 } from "../constants/generated/GetUnread";
-import { GET_UNREAD, SET_VIEWED } from "../constants/graphql";
-import { database } from "../constants/database";
-import { SetViewed } from "../constants/generated/SetViewed";
+import { GET_UNREAD } from "../constants/graphql";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 
 export default function HomeScreen({ navigation }) {
@@ -37,16 +29,14 @@ export default function HomeScreen({ navigation }) {
   // Query All Subscriptions and Unread status every 1 sec
   const {
     data: subscriptions,
-    loading: subscriptions_loading,
-    error: subscriptions_error
-  } = useQuery<GetUnread>(GET_UNREAD, {
+    loading: subscriptions_loading  } = useQuery<GetUnread>(GET_UNREAD, {
     onCompleted: data => {
       // Sort them according to the options set
       data.getUnread.sort((first, second) => sortSubscription(first, second));
       // Set the sorted subscriptions
       setSortedSubscriptions(data.getUnread);
     },
-    onError: error => {},
+    onError: () => {},
     // Don't cache anything
     fetchPolicy: "no-cache",
     // Poll every 1 second
