@@ -4,13 +4,18 @@ import LocationsScreen from '../screens/LocationsScreen';
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Colors } from 'react-native-paper';
 
 const BottomTab = createBottomTabNavigator();
 
-export default function MainMenuNavigator({ navigation, route }) {
+export default function MainMenuNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Hearings"
+      tabBarOptions={{
+        activeTintColor: '#20272F',
+        inactiveTintColor: Colors.grey500
+      }}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           if (route.name === "Home") {
