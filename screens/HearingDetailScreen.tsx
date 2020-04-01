@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Appbar,
   Snackbar,
@@ -10,19 +10,14 @@ import {
   Button,
   Avatar,
   Divider,
-  Subheading,
   Menu
 } from "react-native-paper";
-import { Body, Container, Content } from "native-base";
-import { SearchHearingsByPartyName_hearings } from "../constants/generated/SearchHearingsByPartyName";
+import { Container, Content } from "native-base";
 import { SearchHearingsByCourtFileNumber } from "../constants/generated/SearchHearingsByCourtFileNumber";
 import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
 import { IsSubscribedTo } from "../constants/generated/IsSubscribedTo";
 import {
-  AddHearings,
-  AddHearingsVariables
-} from "../constants/generated/AddHearings";
-import { DatabaseContext, UNSUBSCRIBE } from "../constants/database";
+  AddHearings} from "../constants/generated/AddHearings";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/react-hooks";
 import {
   ADD_HEARING,
@@ -41,19 +36,17 @@ export default function HearingDetailScreen({ navigation, route }) {
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkData, setBookmarkData] = useState(null);
 
-  // Get the database
-  const database = useContext(DatabaseContext);
 
   // Retreive the hearing details from the passed parameters
   const court_file_number: string = route.params?.courtFileNumber;
   // This query will set the hearings to viewed once they have been viewed
-  const [setViewed, {data: setViewed_data, loading: setViewed_loading}] = useMutation<SetViewed>(SET_VIEWED, {
+  const [setViewed] = useMutation<SetViewed>(SET_VIEWED, {
     variables: {
       courtFileNumber: court_file_number
     }
   });
   // All hearings with the same file-number
-  const [hearings, setHearings] = useState(null);
+  const [] = useState(null);
 
   // Get all court hearing with the same court file number
   const {
@@ -89,9 +82,7 @@ export default function HearingDetailScreen({ navigation, route }) {
     getSubscriptionStatus,
     {
       data: subscription_status,
-      loading: subscription_status_loading,
-      error: subscription_status_error
-    }
+      loading: subscription_status_loading    }
   ] = useLazyQuery<IsSubscribedTo>(IS_SUBSCRIBED_TO, {
     variables: {
       courtFileNumber: court_file_number
@@ -109,7 +100,7 @@ export default function HearingDetailScreen({ navigation, route }) {
   // Create functions for subscribte and unsubscribe
   const [
     subscribe,
-    { data: subscribe_data, loading: subscribe_loading, error: subscibe_error }
+    { loading: subscribe_loading }
   ] = useMutation<AddHearings>(ADD_HEARING, {
     variables: {
       hearings: bookmarkData
@@ -118,10 +109,7 @@ export default function HearingDetailScreen({ navigation, route }) {
   const [
     unsubscribe,
     {
-      data: unsubscribe_data,
-      loading: unsubscribe_loading,
-      error: unsubscribe_error
-    }
+      loading: unsubscribe_loading    }
   ] = useMutation(UNSUBSCRIBE_HEARING);
 
   // 3 Dot menu - top right

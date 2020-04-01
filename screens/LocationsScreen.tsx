@@ -1,35 +1,22 @@
 import React, { useState } from "react";
 import {
-  Body,
-  Button,
   Container,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Right,
-  Spinner,
-  Title
-} from "native-base";
+  Content} from "native-base";
 
 import { GET_COURTS } from "../constants/graphql";
-import { GetCourts, GetCourts_courts } from "../constants/generated/GetCourts";
+import { GetCourts } from "../constants/generated/GetCourts";
 import {
   List,
-  Menu,
-  ActivityIndicator,
-  Colors,
   Appbar
 } from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useQuery } from "@apollo/react-hooks";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
 
 export default function LocationScreen({ navigation }) {
-  const { loading, error, data, refetch } = useQuery<GetCourts>(GET_COURTS);
+  const { loading, error, data } = useQuery<GetCourts>(GET_COURTS);
   const [courtInfo, setCourtInfo] = useState(null);
   // 3 Dot menu - top right
-  const [moreMenuVisible, setMoreMenuVisiblity] = useState(false);
+  const [] = useState(false);
   // Storage for various court types
   const [provincialCourts, setProvincialCourts] = useState(null);
   const [provincialSuperiorCourts, setProvincialSuperiorCourts] = useState(
