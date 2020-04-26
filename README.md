@@ -2,6 +2,8 @@
 
 > A native application built with React Native
 
+# Package manager (Yarn)
+- Refer to this website for the instructions on how to install yarn package manager: https://classic.yarnpkg.com/en/docs/install/#windows-stable
 
 # Info
 - expo tabs template has been used as starting point
@@ -11,11 +13,6 @@
   - React Native Paper (external; already in installed) [DOCS HERE](https://callstack.github.io/react-native-paper/getting-started.html)
 
 # Install dependencies
-```
-npm install -g expo-cli
-npm install
-```
-or
 ```
 yarn global add expo-cli
 yarn install
@@ -27,3 +24,18 @@ yarn install
 2. Open the URL provided
 3. Set connection mode to `tunnel` (this mode will require internet)
 4. Scan QR Code with expo app on Android or iOS
+
+# To Generate Types
+Before generating types please installing apollo and apollo-codegen and following are the commands:
+- yarn global add apollo 
+- yarn global add apollo-codegen 
+```bash 
+apollo client:codegen \
+  --excludes=node_modules/* \
+  --includes=**/*.tsx \
+  --endpoint http://gavelapi.ontariotechu.xyz:8000/graphql/ \
+  --target typescript \
+  --tagName=gql \
+  --outputFlat constants/generated \
+  --tsFileExtension=tsx
+```
