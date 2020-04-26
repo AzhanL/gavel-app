@@ -1,34 +1,41 @@
 import React, { useEffect, useState } from "react";
 import {
+  ADD_HEARING,
+  IS_SUBSCRIBED_TO,
+  SEARCH_HEARINGS_BY_FILENUMBER,
+  SET_VIEWED,
+  UNSUBSCRIBE_HEARING
+} from "../constants/graphql";
+import { AddHearings } from "../constants/generated/AddHearings";
+import {
   Appbar,
-  Snackbar,
-  ProgressBar,
-  ActivityIndicator,
-  Card,
-  Title,
-  Paragraph,
-  Button,
   Avatar,
+  Button,
+  Card,
   Divider,
-  Menu
+  Menu,
+  Paragraph,
+  Text,
+  Snackbar,
+  Title,
+  DataTable,
+  Subheading
 } from "react-native-paper";
 import { Container, Content } from "native-base";
-import { SearchHearingsByCourtFileNumber } from "../constants/generated/SearchHearingsByCourtFileNumber";
-import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
 import { IsSubscribedTo } from "../constants/generated/IsSubscribedTo";
-import { AddHearings } from "../constants/generated/AddHearings";
-import { useQuery, useLazyQuery, useMutation } from "@apollo/react-hooks";
-import {
-  ADD_HEARING,
-  UNSUBSCRIBE_HEARING,
-  SEARCH_HEARINGS_BY_FILENUMBER,
-  IS_SUBSCRIBED_TO,
-  SET_VIEWED
-} from "../constants/graphql";
-import { View } from "react-native";
-import { SetViewed } from "../constants/generated/SetViewed";
+import { Linking } from "expo";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
+import { SearchHearingsByCourtFileNumber } from "../constants/generated/SearchHearingsByCourtFileNumber";
+import { SetViewed } from "../constants/generated/SetViewed";
+import { Subscriptions_subscriptions } from "../constants/generated/Subscriptions";
 import { TopLoadingBar } from "../components/TopLoadingBar";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import { View } from "react-native";
+import {
+  capitalizeFirstLetters,
+  firstName,
+  fullname
+} from "../constants/utils";
 
 // TODO: Add a way to sync ID changes and location changes
 
@@ -151,18 +158,6 @@ export default function HearingDetailScreen({ navigation, route }) {
     getSubscriptionStatus();
   };
 
-  // Returns a fullname in format "FirstName LastName" from "LastName, FirstName"
-  const fullname = (comma_seperated_name: string) => {
-    let split_name = comma_seperated_name.split(",");
-    let full_name = "";
-    split_name.forEach(namePart => {
-      full_name += split_name + " ";
-    });
-    if (full_name.trim() === "") {
-      return "Not Avaialble";
-    } else return full_name.trim();
-  };
-
   // Returns the timezone from offset like "+0500" in format "+HHMM"
   // H - hour, M - minute
   const getTimezoneFromOffset = (offset: string): string => {
@@ -218,7 +213,10 @@ export default function HearingDetailScreen({ navigation, route }) {
             navigation.goBack();
           }}
         />
-        <Appbar.Content title={court_file_number} />
+        <Appbar.Content
+          title={court_file_number}
+          titleStyle={{ fontSize: 17 }}
+        />
 
         <Appbar.Action
           icon={bookmarked ? "bookmark" : "bookmark-outline"}
@@ -255,31 +253,57 @@ export default function HearingDetailScreen({ navigation, route }) {
             <View key={i}>
               <Card>
                 <Card.Title
-                  title={fullname(hearing.partyName)}
-                  subtitle={hearing.hearingType}
+                  title={capitalizeFirstLetters(firstName(hearing.partyName))}
                   left={props => <Avatar.Icon {...props} icon="ear-hearing" />}
                 />
                 <Card.Content>
-                  <Title>{hearing.hearingType}</Title>
-                  <Paragraph>Lawyer: {fullname(hearing.lawyer)}</Paragraph>
+                  <Title>{capitalizeFirstLetters(hearing.hearingType)}</Title>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={{ flexWrap: "wrap" }}>
+                      Full Name: {fullname(hearing.partyName, true)}
+                    </Text>
+                  </View>
+                  <Text>Lawyer: {fullname(hearing.lawyer, true)}</Text>
+                  <DataTable>
+                    {/* Date */}
+                    <DataTable.Row>
+                      <DataTable.Cell>Date</DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {new Date(hearing.dateTime).toDateString()}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                    {/* Time */}
+                    <DataTable.Row>
+                      <DataTable.Cell>Time</DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {formatDatetimeStringFromDatetimeAndOffset(
+                          hearing.dateTime,
+                          hearing.dateTimeOffset
+                        )}
+                      </DataTable.Cell>
+                    </DataTable.Row>
 
-                  <Paragraph>
-                    {`Date: ${formatDatetimeStringFromDatetimeAndOffset(
-                      hearing.dateTime,
-                      hearing.dateTimeOffset
-                    )}`}
-                  </Paragraph>
-                  <Paragraph>
-                    {`Timezone: ${hearing.dateTimeOffset
-                      .trim()
-                      .substring(
-                        0,
-                        3
-                      )}:${hearing.dateTimeOffset.trim().substring(3, 5)}`}
-                  </Paragraph>
+                    {/* Timezone */}
+                    <DataTable.Row>
+                      <DataTable.Cell>Timezone</DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {hearing.dateTimeOffset.substring(0, 4) +
+                          ":" +
+                          hearing.dateTimeOffset.substring(4, 6)}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  </DataTable>
                 </Card.Content>
                 <Card.Actions style={{ justifyContent: "space-between" }}>
-                  <Button onPress={() => {}}>Transcript</Button>
+                  <Button
+                    onPress={() => {
+                      Linking.openURL(
+                        `https://www.canlii.org/en/#search/id=${hearing.courtFileNumber}&resultIndex=1`
+                      );
+                    }}
+                  >
+                    Transcript
+                  </Button>
                   <Button
                     onPress={() =>
                       navigation.navigate("Modals", {
@@ -291,7 +315,7 @@ export default function HearingDetailScreen({ navigation, route }) {
                       })
                     }
                   >
-                    Court Information
+                    Court Info.
                   </Button>
                 </Card.Actions>
               </Card>

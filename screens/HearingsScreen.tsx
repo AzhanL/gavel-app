@@ -16,6 +16,7 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import { SEARCH_HEARINGS_BY_PARTYNAME } from "../constants/graphql";
 import { SearchHearingsByPartyName_hearings } from "../constants/generated/SearchHearingsByPartyName";
 import { MiddleLoadingBar } from "../components/MiddleLoadingBar";
+import { capitalizeFirstLetters } from "../constants/utils";
 
 
 export default function HearingsScreen({ navigation }) {
@@ -175,12 +176,13 @@ export default function HearingsScreen({ navigation }) {
           <Content padder>
             {Object.keys(sortedDataByCategory).map((category, i) => (
               <List.Accordion
-                title={category}
+                title={capitalizeFirstLetters(category)}
                 key={i}
                 onPress={() => {
                   removeSearchBar();
                 }}
                 left={props => <List.Icon {...props} icon="file-tree" />}
+                titleNumberOfLines={3}
               >
                 {sortedDataByCategory[category].map(
                   (hearing_details: SearchHearingsByPartyName_hearings, j) => (
@@ -191,7 +193,7 @@ export default function HearingsScreen({ navigation }) {
                       right={props => (
                         <List.Icon {...props} icon="arrow-right" />
                       )}
-                      style={{ backgroundColor: Colors.grey300 }}
+                      style={{ backgroundColor: Colors.grey300}}
                       onPress={() => {
                         navigation.navigate("Modals", {
                           screen: "HearingDetail",
