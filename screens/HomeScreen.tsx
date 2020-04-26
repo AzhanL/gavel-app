@@ -82,7 +82,7 @@ export default function HomeScreen({ navigation }) {
             key={1}
           />
           <Menu.Item
-            title="Delete Some Bookmarks"
+            title="Test Notification"
             onPress={() => {
               database.transaction(tx => {
                 tx.executeSql(
