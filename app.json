@@ -26,9 +26,15 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "package": "xyz.ontariotechu.gavel",
+      "versionCode": 1
+    },
     "ios": {
       "supportsTablet": true,
-      "requireFullScreen": false
+      "requireFullScreen": false,
+      "bundleIdentifier": "xyz.ontariotechu.gavel",
+      "buildNumber": "1.0.1"
     },
     "scheme": "gvl"
   }
